@@ -1,3 +1,4 @@
+import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -44,6 +45,7 @@ class Rides extends ChangeNotifier {
   void startRide() {
     print("startride");
     if (_currentRide == null) {
+      SensorService().checkPermissions();
       _currentRide = Ride();
       notifyListeners();
       print("started ride");
@@ -58,7 +60,5 @@ class Rides extends ChangeNotifier {
       _currentRide = null;
       notifyListeners();
     }
-
   }
-
 }

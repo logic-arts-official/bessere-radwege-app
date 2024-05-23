@@ -15,7 +15,7 @@ class NoRidesPane extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Image(image: AssetImage('assets/images/fahrradkatze.png'), ),
+            child: Image(image: AssetImage('assets/images/fahrradkatze.gif'), ),
           ),
           Padding(
             padding: EdgeInsets.all(8.0),
