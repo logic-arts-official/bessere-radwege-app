@@ -14,8 +14,28 @@ void main() {
 
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+
+  late Future<void> _initApp;
+
+  MyAppState() {
+    _initApp = initAppAsync();
+  }
+
+  static Future<void> initAppAsync() async {
+    await User().initialize();
+    //TODO: Load map assets
+    await Future.delayed(Duration(milliseconds: 2000), () {
+      // Do something
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -28,9 +48,23 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Provider.of<User>(context).firstStart ?
-        const FirstBootScreen(title: 'Bessere Radwege') :
-        const MainScreen(title: 'Bessere Radwege')
+      home: FutureBuilder<void>(
+        future: _initApp,
+        builder:(BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator()
+              )
+            );
+          }
+          if (Provider.of<User>(context).firstStart) {
+            return const FirstBootScreen(title: 'Bessere Radwege');
+          } else {
+            return const MainScreen(title: 'Bessere Radwege');
+          }
+        }
+      )
     );
   }
 }

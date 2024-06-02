@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
 
     bool haveCurrentRide = (Provider.of<Rides>(context).currentRide != null);
     if (haveCurrentRide) {
-      return RecordScreen(title: widget.title);
+      return RecordScreen();
     }
     bool havePastRide = (Provider.of<Rides>(context).pastRides.isNotEmpty);
 

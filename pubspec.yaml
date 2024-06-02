@@ -34,8 +34,11 @@ dependencies:
   uuid: ^4.4.0
   intl: ^0.19.0
   url_launcher: ^6.2.6
-  geolocator: ^11.1.0
+  geolocator: ^12.0.0
   maplibre_gl: ^0.19.0
+  path_provider: ^2.1.3
+  archive: ^3.6.0
+  shared_preferences: ^2.2.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -66,6 +69,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/map-data.zip
+    - assets/map-style.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
