@@ -3,6 +3,7 @@ import 'package:bessereradwege/view/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bessereradwege/model/user.dart';
+import 'package:bessereradwege/model/map_data.dart';
 import 'package:bessereradwege/model/ride.dart';
 
 void main() {
@@ -23,23 +24,40 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
 
-  late Future<void> _initApp;
+  bool _initialized = false;
 
-  MyAppState() {
-    _initApp = initAppAsync();
+  Future<void> initAppAsync() async {
+    await Future.wait([
+      User().initialize(),
+      MapData().initialize(),
+    ]);
+    setState(() {
+      _initialized = true;
+    });
   }
 
-  static Future<void> initAppAsync() async {
-    await User().initialize();
-    //TODO: Load map assets
-    await Future.delayed(Duration(milliseconds: 2000), () {
-      // Do something
-    });
+  @override initState () {
+    super.initState();
+    initAppAsync();
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    Widget contents;
+    if (!_initialized) {
+      contents = Scaffold(
+          body: Center(
+              child: CircularProgressIndicator()
+          )
+      );
+    } else if (Provider.of<User>(context).firstStart) {
+      contents = FirstBootScreen(title: 'Bessere Radwege');
+    } else {
+      contents = MainScreen(title: 'Bessere Radwege');
+    }
+
     return MaterialApp(
       title: 'Bessere Radwege',
       theme: ThemeData(
@@ -48,23 +66,7 @@ class MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-      home: FutureBuilder<void>(
-        future: _initApp,
-        builder:(BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator()
-              )
-            );
-          }
-          if (Provider.of<User>(context).firstStart) {
-            return const FirstBootScreen(title: 'Bessere Radwege');
-          } else {
-            return const MainScreen(title: 'Bessere Radwege');
-          }
-        }
-      )
+      home: contents,
     );
   }
 }

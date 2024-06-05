@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bessereradwege/model/user.dart';
+import 'package:bessereradwege/model/map_data.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPane extends StatelessWidget {
@@ -11,7 +12,10 @@ class SettingsPane extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: () {Provider.of<User>(context, listen: false).reset(); },
+          onPressed: () {
+            Provider.of<User>(context, listen: false).reset();
+            MapData().resetAssets();
+          },
           child: const Text('Einstellungen löschen')
         )
       ],

@@ -1,14 +1,10 @@
 {
   "version": 8,
-  "name": "Empty Style",
+  "name": "Bessere Radwege",
   "metadata": {"maputnik:renderer": "mbgljs"},
-  "sources": {
-    "cologne": {"type": "vector",
-      "url": "mbtiles://***PATH***/cologne.mbtiles"
-    }
-  },
+  "sources": {},
   "sprite": "",
-  "glyphs": "file://***PATH***/font/{fontstack}/{range}.pbf",
+  "glyphs": "file://***PATH***/map-font/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",
