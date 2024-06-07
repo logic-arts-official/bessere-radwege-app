@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:async/async.dart';
 
 class SensorService {
 
@@ -12,15 +14,18 @@ class SensorService {
   late SendPort _sendPort; //main to worker
 
   factory SensorService() {
-    print("worker ready: ${_service._workerReady.isCompleted}");
-
     return _service;
   }
 
   SensorService._internal() {
     print("SensorService internal");
     _receivePort.listen(_handleMessagesFromWorker);
-    Isolate.spawn(_worker, _receivePort.sendPort);
+    final args = SensorServiceWorkerArgs(
+      port: _receivePort.sendPort,
+      token: RootIsolateToken.instance!);
+    BackgroundIsolateBinaryMessenger.ensureInitialized(args.token);
+
+    Isolate.spawn(_worker, args);
   }
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
@@ -64,14 +69,25 @@ class SensorService {
     return true;
   }
 
-  static void _worker(SendPort sendPort) {
+  static void _worker(SensorServiceWorkerArgs args) {
     print("sensor worker starting");
+    SendPort sendPort = args.port;
+    RootIsolateToken token = args.token;
+    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
 
     final receivePort = ReceivePort();
     sendPort.send(receivePort.sendPort);
 
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+
+    final locationStream = Geolocator.getPositionStream(locationSettings: locationSettings);
+    var streams = StreamGroup.merge(<Stream>[locationStream, receivePort]);
+
     //message loop
-    receivePort.listen((dynamic message) async {
+    streams.listen((dynamic message) async {
       print("worker got ${message}");
     });
   }
@@ -84,6 +100,14 @@ class SensorService {
       print("Got message from worker: ${message}");
     }
   }
+}
 
+class SensorServiceWorkerArgs {
+  final RootIsolateToken token;
+  final SendPort port;
 
+  SensorServiceWorkerArgs({
+    required this.token,
+    required this.port,
+  });
 }
