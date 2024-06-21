@@ -4,14 +4,11 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:async/async.dart';
+import 'package:bessereradwege/model/ride.dart';
 
 class SensorService {
 
   static final SensorService _service = SensorService._internal();
-
-  final ReceivePort _receivePort = ReceivePort(); //worker to main
-  final Completer<void> _workerReady = Completer.sync();
-  late SendPort _sendPort; //main to worker
 
   factory SensorService() {
     return _service;
@@ -19,18 +16,9 @@ class SensorService {
 
   SensorService._internal() {
     print("SensorService internal");
-    _receivePort.listen(_handleMessagesFromWorker);
-    final args = SensorServiceWorkerArgs(
-      port: _receivePort.sendPort,
-      token: RootIsolateToken.instance!);
-    BackgroundIsolateBinaryMessenger.ensureInitialized(args.token);
-
-    Isolate.spawn(_worker, args);
   }
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
-
-  bool workerRunning = false;
 
   Future<bool> checkPermissions() async {
     bool serviceEnabled;
@@ -69,45 +57,29 @@ class SensorService {
     return true;
   }
 
-  static void _worker(SensorServiceWorkerArgs args) {
-    print("sensor worker starting");
-    SendPort sendPort = args.port;
-    RootIsolateToken token = args.token;
-    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+  StreamSubscription<Position>? _positionStreamSubscription;
 
-    final receivePort = ReceivePort();
-    sendPort.send(receivePort.sendPort);
-
-    final LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 100,
-    );
-
-    final locationStream = Geolocator.getPositionStream(locationSettings: locationSettings);
-    var streams = StreamGroup.merge(<Stream>[locationStream, receivePort]);
-
+  bool startRecording(Ride ride) {
+    if (_positionStreamSubscription != null) {
+      print("could not start recording, already running!");
+      return false;
+    }
+    final locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 2);
+    final positionStream = Geolocator.getPositionStream(locationSettings: locationSettings);
     //message loop
-    streams.listen((dynamic message) async {
-      print("worker got ${message}");
+    _positionStreamSubscription = positionStream.listen((Position pos) {
+      ride.addPosition(pos);
     });
+    return true;
   }
 
-  void _handleMessagesFromWorker (dynamic message) {
-    if (message is SendPort) {
-      _sendPort = message;
-      _workerReady.complete();
-    } else {
-      print("Got message from worker: ${message}");
+  void stopRecording() {
+    if (_positionStreamSubscription != null) {
+      _positionStreamSubscription!.cancel().then((_) {
+        print("position stream stopped.");
+        _positionStreamSubscription = null;
+      });
     }
   }
 }
 
-class SensorServiceWorkerArgs {
-  final RootIsolateToken token;
-  final SendPort port;
-
-  SensorServiceWorkerArgs({
-    required this.token,
-    required this.port,
-  });
-}

@@ -65,12 +65,6 @@ class RecordScreenState extends State<RecordScreen> {
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
 
-/*      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {Provider.of<Rides>(context, listen: false).finishCurrentRide();},
-          label: const Text("Fahrt beenden"),
-          icon: const Icon(Icons.stop_rounded),
-        )
-*/
     );
   }
 
