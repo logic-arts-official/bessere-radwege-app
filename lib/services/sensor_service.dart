@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:isolate';
-import 'dart:ui';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:async/async.dart';
 import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/constants.dart';
+import 'package:bessereradwege/model/location.dart';
 
 class SensorService {
 
@@ -64,11 +62,23 @@ class SensorService {
       print("could not start recording, already running!");
       return false;
     }
-    final locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 2);
+    final locationSettings = LocationSettings(accuracy: LocationAccuracy.high,
+        distanceFilter: Constants.LOCATION_DISTANCE_FILTER_M);
     final positionStream = Geolocator.getPositionStream(locationSettings: locationSettings);
     //message loop
     _positionStreamSubscription = positionStream.listen((Position pos) {
-      ride.addPosition(pos);
+      final loc = Location(
+        timestamp: pos.timestamp,
+        latitude: pos.latitude,
+        longitude: pos.longitude,
+        accuracy: pos.accuracy,
+        altitude: pos.altitude,
+        altitudeAccuracy: pos.altitudeAccuracy,
+        heading: pos.heading,
+        headingAccuracy: pos.headingAccuracy,
+        speed: pos.speed,
+        speedAccuracy: pos.speedAccuracy);
+      ride.addLocation(loc);
     });
     return true;
   }
@@ -76,7 +86,6 @@ class SensorService {
   void stopRecording() {
     if (_positionStreamSubscription != null) {
       _positionStreamSubscription!.cancel().then((_) {
-        print("position stream stopped.");
         _positionStreamSubscription = null;
       });
     }
