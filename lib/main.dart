@@ -30,6 +30,7 @@ class MyAppState extends State<MyApp> {
     await Future.wait([
       User().initialize(),
       MapData().initialize(),
+      Rides().initialize(),
     ]);
     setState(() {
       _initialized = true;

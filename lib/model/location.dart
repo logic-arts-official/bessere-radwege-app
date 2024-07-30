@@ -65,4 +65,31 @@ class Location {
     return d;
   }
 
+  Location.fromMap(Map<String, dynamic> map) :
+    _timestamp = DateTime.fromMicrosecondsSinceEpoch(((map['timestamp'] as double) * 1000000).round()),
+    _latitude = map['latitude'] as double,
+    _longitude = map['longitude'] as double,
+    _accuracy = map['longitude'] as double,
+    _altitude = map['altitude'] as double,
+    _altitudeAccuracy = map['altitudeAccuracy'] as double,
+    _heading = map['heading'] as double,
+    _headingAccuracy = map['headingAccuracy'] as double,
+    _speed = map['speed'] as double,
+    _speedAccuracy = map['speedAccuracy'] as double;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'timestamp': _timestamp.microsecondsSinceEpoch.toDouble()/1000000,
+      'latitude': _latitude,
+      'longitude': _longitude,
+      'accuracy': _accuracy,
+      'altitude': _altitude,
+      'altitudeAccuracy': _altitudeAccuracy,
+      'heading': _heading,
+      'headingAccuracy': _headingAccuracy,
+      'speed': _speed,
+      'speedAccuracy': _speedAccuracy,
+    };
+  }
+
 }
