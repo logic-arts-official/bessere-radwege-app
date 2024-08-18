@@ -3,10 +3,36 @@ import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:bessereradwege/model/location.dart';
 import 'package:bessereradwege/constants.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:math';
 import 'package:sqflite/sqflite.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
+import 'package:pointycastle/api.dart' as crypto;
 
 const DB_VERSION = 1;
+
+enum RideType {
+  Unknown,
+  Commute,
+  Recreational,
+  Other,
+}
+
+enum MountType {
+  Unknown,
+  Jacket,
+  Pants,
+  Vehicle,
+  Other,
+}
+
+enum VehicleType {
+  Unknown,
+  Powered,
+  Unpowered,
+  Other,
+}
 
 class Ride extends ChangeNotifier {
   late String _uuid;
@@ -20,10 +46,17 @@ class Ride extends ChangeNotifier {
   double _durationS = 0.0;
   double _motionDurationS = 0.0;
   double _maxSpeedMS = 0.0;
+  double _pseudonymSeed = Random.secure().nextDouble();
   int _dbId = -1;
+  RideType _rideType = RideType.Unknown;
+  MountType _mountType = MountType.Unknown;
+  VehicleType _vehicleType = VehicleType.Unknown;
+  String _comment = "";
+  late crypto.AsymmetricKeyPair<crypto.PublicKey, crypto.PrivateKey> _keyPair;
 
   Ride.forRecording() {
     _uuid = const Uuid().v4();
+    _genKeyPair();
   }
 
   String get uuid => _uuid;
@@ -33,6 +66,11 @@ class Ride extends ChangeNotifier {
 
   bool get running {
     return (_endDate == null);
+  }
+
+  Future<void> _genKeyPair() async {
+    final helper = RsaKeyHelper();
+    _keyPair = await helper.computeRSAKeyPair(helper.getSecureRandom());
   }
 
   void addLocation(Location l) {
@@ -140,7 +178,7 @@ class Ride extends ChangeNotifier {
     return Constants.NIGHT_RIDE;
   }
 
-  Future<void> _dbUpsertRide(Database db, {bool updateData = true}) async {
+  Future<void> dbUpsertRide(Database db, {bool updateData = true}) async {
     assert(!running, "Cannot persist ride because it is still running");
 
     _validateStats();
@@ -153,7 +191,15 @@ class Ride extends ChangeNotifier {
       'motionDist': _motionDistM,
       'duration': _durationS,
       'motionDuration': _motionDurationS,
-      'maxSpeed': _maxSpeedMS
+      'maxSpeed': _maxSpeedMS,
+      'publicKey': RsaKeyHelper().encodePublicKeyToPemPKCS1(_keyPair.publicKey as RSAPublicKey),
+      'privateKey': RsaKeyHelper().encodePrivateKeyToPemPKCS1(_keyPair.privateKey as RSAPrivateKey),
+      'rideType': _rideType.index,
+      'vehicleType': _vehicleType.index,
+      'mountType': _mountType.index,
+      'comment': _comment,
+      'pseudonymSeed':_pseudonymSeed,
+
     };
     final haveId = _dbId >= 0;
     if (haveId) {
@@ -203,6 +249,23 @@ class Ride extends ChangeNotifier {
     _maxSpeedMS = map['maxSpeed'] as double;
     assert(map['id'] is int);
     _dbId = map['id'] as int;
+    assert(map['publicKey'] is String);
+    String pubPem = map['publicKey'] as String;
+    RSAPublicKey pubKey = RsaKeyHelper().parsePublicKeyFromPem(pubPem);
+    assert(map['privateKey'] is String);
+    String privPem = map['privateKey'] as String;
+    RSAPrivateKey privKey = RsaKeyHelper().parsePrivateKeyFromPem(privPem);
+    _keyPair = crypto.AsymmetricKeyPair(pubKey, privKey);
+    assert(map['rideType'] is int);
+    _rideType = RideType.values[(map['rideType'] as int)];
+    assert(map['vehicleType'] is int);
+    _vehicleType = VehicleType.values[(map['vehicleType'] as int)];
+    assert(map['mountType'] is int);
+    _mountType = MountType.values[(map['mountType'] as int)];
+    assert(map['comment'] is String);
+    _comment = map['comment'] as String;
+    assert(map['pseudonymSeed'] is double);
+    _pseudonymSeed = map['pseudonymSeed'] as double;
     _statsValid = true;
 
     print("TODO: actual location data is not loaded. We should provide a lambda-based mechanism for lazily loading and unloading");
@@ -211,98 +274,3 @@ class Ride extends ChangeNotifier {
 
 }
 
-class Rides extends ChangeNotifier {
-
-  static Rides? _sharedRides;
-
-  factory Rides() {
-    _sharedRides ??= Rides._internal();
-    return _sharedRides!;
-  }
-
-  Rides._internal();
-
-
-  Ride? _currentRide;
-  final List<Ride> _pastRides = [];
-  late Database _database;
-
-  Ride? get currentRide => _currentRide;
-  List<Ride> get pastRides => _pastRides;
-
-  Future<void> initialize() async {
-//    final dbPath = await getDatabasesPath();
-    _database = await openDatabase('rides.db', version:DB_VERSION, onCreate: _dbCreateTables);
-    print("DATABASE ride initialize open database");
-    await _dbLoadRides();
-  }
-
-  void startRide() {
-    print("startride");
-    if (_currentRide == null) {
-      SensorService().checkPermissions().then((ok) {
-        print("permissions ok: $ok");
-        if (ok) {
-          _currentRide = Ride.forRecording();
-          SensorService().startRecording(_currentRide!);
-          notifyListeners();
-          print("started ride");
-        }
-      });
-    }
-  }
-
-  Future<void> finishCurrentRide() async {
-    print("ride: finishCurrentRide");
-    if (_currentRide != null) {
-      print("ride: have current ride");
-      SensorService().stopRecording();
-      Ride ride = _currentRide as Ride;
-      ride.finish();
-      _pastRides.add(ride);
-      print("ride: added ride to past rides, now ${_pastRides.length}");
-      _currentRide = null;
-      notifyListeners();
-      print("DATABASE: trying to persist _database is $_database");
-      await ride._dbUpsertRide(_database);
-    }
-  }
-
-  Future<void> _dbCreateTables(db, version) async {
-    await db.execute('CREATE TABLE ride('
-        'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-        'uuid TEXT,'
-        'name TEXT,'
-        'startDate REAL,'
-        'endDate REAL,'
-        'dist REAL,'
-        'motionDist REAL,'
-        'duration REAL,'
-        'motionDuration REAL,'
-        'maxSpeed REAL'
-        ')');
-    await db.execute('CREATE TABLE location('
-        'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-        'rideId INTEGER,'
-        'timestamp REAL,'
-        'latitude REAL,'
-        'longitude REAL,'
-        'accuracy REAL,'
-        'altitude REAL,'
-        'altitudeAccuracy REAL,'
-        'heading REAL,'
-        'headingAccuracy REAL,'
-        'speed REAL,'
-        'speedAccuracy REAL'
-        ')');
-  }
-
-  Future<void> _dbLoadRides() async {
-    final rides = await _database.query('ride', orderBy: 'startDate');
-    print("DATABASE: Loading rides $rides");
-    for (final rideMap in rides) {
-      _pastRides.add(Ride.fromDbEntry(_database, rideMap));
-    }
-    notifyListeners();
-  }
-}
