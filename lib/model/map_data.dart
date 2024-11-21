@@ -55,7 +55,7 @@ class MapData extends ChangeNotifier {
     assert(_mapResourcesPath != null, "MapData: not initialized!");
     File f = File('$_mapResourcesPath/map-style.json');
     print('MapData: Style File ${'$_mapResourcesPath/map-style.json'} exists ${f.existsSync()} length ${f.lengthSync()}');
-    return '${_mapResourcesPath}/map-style.json';
+    return '$_mapResourcesPath/map-style.json';
   }
 
   List<String> get loadedMaps {

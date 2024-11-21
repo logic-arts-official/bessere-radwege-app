@@ -77,9 +77,9 @@ class Location {
     _speed = map['speed'] as double,
     _speedAccuracy = map['speedAccuracy'] as double;
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({double timeDelta = 0}) {
     return {
-      'timestamp': _timestamp.microsecondsSinceEpoch.toDouble()/1000000,
+      'timestamp': _timestamp.microsecondsSinceEpoch.toDouble()/1000000 + timeDelta,
       'latitude': _latitude,
       'longitude': _longitude,
       'accuracy': _accuracy,

@@ -1,4 +1,5 @@
-import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/model/running_ride.dart';
+import 'package:bessereradwege/model/finished_ride.dart';
 import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,17 +16,16 @@ class Rides extends ChangeNotifier {
   Rides._internal();
 
 
-  Ride? _currentRide;
-  final List<Ride> _pastRides = [];
+  RunningRide? _currentRide;
+  final List<FinishedRide> _pastRides = [];
   late Database _database;
 
-  Ride? get currentRide => _currentRide;
-  List<Ride> get pastRides => _pastRides;
+  RunningRide? get currentRide => _currentRide;
+  List<FinishedRide> get pastRides => _pastRides;
 
   Future<void> initialize() async {
 //    final dbPath = await getDatabasesPath();
     _database = await openDatabase('rides.db', version:DB_VERSION, onCreate: _dbCreateTables);
-    print("DATABASE ride initialize open database");
     await _dbLoadRides();
   }
 
@@ -35,7 +35,7 @@ class Rides extends ChangeNotifier {
       SensorService().checkPermissions().then((ok) {
         print("permissions ok: $ok");
         if (ok) {
-          _currentRide = Ride.forRecording();
+          _currentRide = RunningRide();
           SensorService().startRecording(_currentRide!);
           notifyListeners();
           print("started ride");
@@ -49,14 +49,12 @@ class Rides extends ChangeNotifier {
     if (_currentRide != null) {
       print("ride: have current ride");
       SensorService().stopRecording();
-      Ride ride = _currentRide as Ride;
+      RunningRide ride = _currentRide as RunningRide;
       ride.finish();
-      _pastRides.add(ride);
+      _pastRides.add(FinishedRide.fromRunningRide(ride, _database));
       print("ride: added ride to past rides, now ${_pastRides.length}");
       _currentRide = null;
       notifyListeners();
-      print("DATABASE: trying to persist _database is $_database");
-      await ride.dbUpsertRide(_database);
     }
   }
 
@@ -77,7 +75,12 @@ class Rides extends ChangeNotifier {
         'rideType INTEGER,'
         'vehicleType INTEGER,'
         'mountType INTEGER,'
-        'comment TEXT'
+        'flags INTEGER,'
+        'comment TEXT,'
+        'pseudonymSeed INTEGER,'
+        'syncAllowed INTEGER,'
+        'editRevision INTEGER,'
+        'syncRevision INTEGER'
         ')');
     await db.execute('CREATE TABLE location('
         'id INTEGER PRIMARY KEY AUTOINCREMENT,'
@@ -99,7 +102,7 @@ class Rides extends ChangeNotifier {
     final rides = await _database.query('ride', orderBy: 'startDate');
     print("DATABASE: Loading rides $rides");
     for (final rideMap in rides) {
-      _pastRides.add(Ride.fromDbEntry(_database, rideMap));
+      _pastRides.add(FinishedRide.fromDbEntry(_database, rideMap));
     }
     notifyListeners();
   }

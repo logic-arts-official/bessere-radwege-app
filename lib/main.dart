@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bessereradwege/model/user.dart';
 import 'package:bessereradwege/model/map_data.dart';
-import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/model/rides.dart';
 
 void main() {
   runApp(
@@ -48,15 +48,15 @@ class MyAppState extends State<MyApp> {
 
     Widget contents;
     if (!_initialized) {
-      contents = Scaffold(
+      contents = const Scaffold(
           body: Center(
               child: CircularProgressIndicator()
           )
       );
     } else if (Provider.of<User>(context).firstStart) {
-      contents = FirstBootScreen(title: 'Bessere Radwege');
+      contents = const FirstBootScreen(title: 'Bessere Radwege');
     } else {
-      contents = MainScreen(title: 'Bessere Radwege');
+      contents = const MainScreen(title: 'Bessere Radwege');
     }
 
     return MaterialApp(

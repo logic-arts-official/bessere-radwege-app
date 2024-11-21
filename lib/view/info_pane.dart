@@ -9,10 +9,10 @@ class InfoPane extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: ListView(
-        padding:EdgeInsets.only(top:10.0,bottom:100.0),
+        padding:const EdgeInsets.only(top:10.0,bottom:100.0),
         children: [
           Text('Über das Projekt', style: Theme.of(context).textTheme.titleLarge),
-          Text('''
+          const Text('''
           
 Unser Plan: Wir sammeln und analysieren Bewegungsdaten von und mit Radfahrenden automatisch bei jeder Fahrt. Die daraus gewonnenen Informationen sollen helfen, die Fahrradinfrastruktur in Köln zu verbessern.
           
@@ -24,7 +24,7 @@ Die erhobenen Datensätze werden anonymisiert auf Open Data Cologne veröffentli
           
 „Bessere Radwege“ entsteht im Rahmen des Förderprojektes „un:box Cologne“ der Stadt Köln.
           '''),
-          Image(image: AssetImage('assets/images/unbox_logo.png')),
+          const Image(image: AssetImage('assets/images/unbox_logo.png')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,

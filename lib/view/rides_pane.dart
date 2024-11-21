@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/model/rides.dart';
+import 'package:bessereradwege/model/finished_ride.dart';
 
 
 class RidesPane extends StatelessWidget {
@@ -10,24 +11,25 @@ class RidesPane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Ride> rides = Provider.of<Rides>(context).pastRides;
+    List<FinishedRide> rides = Provider.of<Rides>(context).pastRides;
     int totalNumRides = rides.length;
     double totalDistanceM = 0;
-    Duration duration = Duration();
-    for (Ride ride in rides) {
+    Duration duration = const Duration();
+    for (FinishedRide ride in rides) {
       totalDistanceM += ride.totalDistanceM;
       duration += ride.recordingDuration;
     }
     double avgSpeed = 3600.0 * totalDistanceM / duration.inMilliseconds;
 
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Text('Deine Statistik', style: Theme.of(context).textTheme.titleLarge),
         ),
         Table(
-          border: TableBorder(
+          border: const TableBorder(
               horizontalInside: BorderSide(width: 1, style: BorderStyle.solid),
               top: BorderSide(width: 1, style: BorderStyle.solid),
               bottom: BorderSide(width: 1, style: BorderStyle.solid)),
@@ -110,16 +112,21 @@ class RidesPane extends StatelessWidget {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) => RideDigestView(rides[index]),
             separatorBuilder: (BuildContext context, int index) => const Divider(),
+            physics: NeverScrollableScrollPhysics(),
         ),
+        Padding(
+          padding: const EdgeInsets.only(top:90.0),
+        )
       ],
+    )
     ); // This trailing comma makes auto-formatting nicer for build methods.
   }
 }
 
 class RideDigestView extends StatelessWidget {
-  final Ride _ride;
+  final FinishedRide _ride;
 
-  const RideDigestView(Ride ride) : _ride = ride;
+  const RideDigestView(FinishedRide ride, {super.key}) : _ride = ride;
 
   @override Widget build(BuildContext context) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -130,39 +137,39 @@ class RideDigestView extends StatelessWidget {
 
     return Container(
       color:Colors.tealAccent,
-      child: Center (
-          child: Column(
-            children: [
-              Text('${_ride.name}', style: Theme.of(context).textTheme.titleLarge),
-              Table(
-                border: TableBorder(
-                  horizontalInside: BorderSide(width: 1, style: BorderStyle.solid),
-                  top: BorderSide(width: 1, style: BorderStyle.solid),
-                  bottom: BorderSide(width: 1, style: BorderStyle.solid)),
-                children: <TableRow>[
-                TableRow(
-                    children: [
-                      Text("Datum", style: Theme.of(context).textTheme.labelLarge),
-                      Text("Start", style: Theme.of(context).textTheme.labelLarge),
-                      Text("Dauer", style: Theme.of(context).textTheme.labelLarge),
-                      Text("Strecke", style: Theme.of(context).textTheme.labelLarge),
-                      Text("Schnitt", style: Theme.of(context).textTheme.labelLarge),
-                    ]
-                ),
-                TableRow(
-                    children: [
-                      Text(DateFormat('dd.MM.yy').format(_ride.startDate)),
-                      Text(DateFormat('Hm').format(_ride.startDate)),
-                      Text(dur),
-                      Text("${NumberFormat.decimalPatternDigits(decimalDigits:1).format(_ride.totalDistanceM/1000)} km"),
-                      Text("${NumberFormat.decimalPatternDigits(decimalDigits:1).format(_ride.averageSpeedKmh)} km/h"),
-                    ]
-                ),
-                ]
-              ),
-            ]
+          child: Center (
+              child: Column(
+                  children: [
+                    Text(_ride.name, style: Theme.of(context).textTheme.titleLarge),
+                    Table(
+                        border: const TableBorder(
+                            horizontalInside: BorderSide(width: 1, style: BorderStyle.solid),
+                            top: BorderSide(width: 1, style: BorderStyle.solid),
+                            bottom: BorderSide(width: 1, style: BorderStyle.solid)),
+                        children: <TableRow>[
+                          TableRow(
+                              children: [
+                                Text("Datum", style: Theme.of(context).textTheme.labelLarge),
+                                Text("Start", style: Theme.of(context).textTheme.labelLarge),
+                                Text("Dauer", style: Theme.of(context).textTheme.labelLarge),
+                                Text("Strecke", style: Theme.of(context).textTheme.labelLarge),
+                                Text("Schnitt", style: Theme.of(context).textTheme.labelLarge),
+                              ]
+                          ),
+                          TableRow(
+                              children: [
+                                Text(DateFormat('dd.MM.yy').format(_ride.startDate)),
+                                Text(DateFormat('Hm').format(_ride.startDate)),
+                                Text(dur),
+                                Text("${NumberFormat.decimalPatternDigits(decimalDigits:1).format(_ride.totalDistanceM/1000)} km"),
+                                Text("${NumberFormat.decimalPatternDigits(decimalDigits:1).format(_ride.averageSpeedKmh)} km/h"),
+                              ]
+                          ),
+                        ]
+                    ),
+                  ]
+              )
           )
-      )
     );
   }
 

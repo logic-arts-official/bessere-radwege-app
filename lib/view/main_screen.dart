@@ -3,7 +3,7 @@ import 'package:bessereradwege/view/no_rides_pane.dart';
 import 'package:bessereradwege/view/rides_pane.dart';
 import 'package:bessereradwege/view/info_pane.dart';
 import 'package:bessereradwege/view/record_screen.dart';
-import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/model/rides.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,21 +34,21 @@ class _MainScreenState extends State<MainScreen> {
 
     bool haveCurrentRide = (Provider.of<Rides>(context).currentRide != null);
     if (haveCurrentRide) {
-      return RecordScreen();
+      return const RecordScreen();
     }
     bool havePastRide = (Provider.of<Rides>(context).pastRides.isNotEmpty);
 
     Widget pane;
     if (_pageIndex == 0) {
       if (havePastRide) {
-        pane = RidesPane();
+        pane = const RidesPane();
       } else {
-        pane = NoRidesPane();
+        pane = const NoRidesPane();
       }
     } else if (_pageIndex == 1) {
-      pane = SettingsPane();
+      pane = const SettingsPane();
     } else {
-      pane = InfoPane();
+      pane = const InfoPane();
     }
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.

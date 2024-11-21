@@ -41,19 +41,19 @@ class FirstBootScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text('Schön, dass du dabei bist!',
                     style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text('Wir wollen mit Bewegungsdaten die Radwege in Köln analysieren und so bessere Wege für alle schaffen.',
                     style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text('Dafür werden deine Bewegungsdaten und die Daten des Beschleunigungssensors auf dem Handy gesammelt und anonymisiert auf den Bessere-Radwege-Server hochgeladen.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
@@ -68,7 +68,7 @@ class FirstBootScreen extends StatelessWidget {
                   backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 ),
                 onPressed: Provider.of<User>(context).uploadConsent ? () {
-                  onPressed: Provider.of<User>(context, listen:false).firstStart = false;
+                  Provider.of<User>(context, listen:false).firstStart = false;
                 } : null,
                 child: Text("Los geht's",style: Theme.of(context).textTheme.labelLarge),
               )

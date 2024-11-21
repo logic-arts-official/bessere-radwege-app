@@ -2,9 +2,10 @@ import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/model/rides.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:bessereradwege/model/map_data.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({super.key});
@@ -15,7 +16,7 @@ class RecordScreen extends StatefulWidget {
 
 class RecordScreenState extends State<RecordScreen> {
 
-  MaplibreMapController? _mapController;
+  MapLibreMapController? _mapController;
   final MapData _mapData = MapData();
 
   @override
@@ -43,7 +44,7 @@ class RecordScreenState extends State<RecordScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children:[
             Expanded(
-              child:MaplibreMap(
+              child:MapLibreMap(
                 styleString: _mapData.styleJsonPath,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: const CameraPosition(target: LatLng(50.9365, 6.9398), zoom: 16.0),
@@ -53,9 +54,18 @@ class RecordScreenState extends State<RecordScreen> {
                 dragEnabled: true,
                 myLocationEnabled: true,
                 compassEnabled: true,
-                myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
+                myLocationTrackingMode: MyLocationTrackingMode.tracking,
                 onStyleLoadedCallback: onStyleLoadedCallback,
               )
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                child: Text(
+                    'OpenStreetMap 2024',
+                    style: Theme.of(context).textTheme.bodySmall),
+                onDoubleTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright'))
+              ),
             ),
             ElevatedButton(
               onPressed: () {Provider.of<Rides>(context, listen: false).finishCurrentRide(); },
@@ -68,7 +78,7 @@ class RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  void _onMapCreated(MaplibreMapController controller) {
+  void _onMapCreated(MapLibreMapController controller) {
     _mapController = controller;
     print("MapData: map created!");
   }

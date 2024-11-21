@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'package:bessereradwege/model/ride.dart';
+import 'package:bessereradwege/model/running_ride.dart';
 import 'package:bessereradwege/constants.dart';
 import 'package:bessereradwege/model/location.dart';
 
@@ -57,12 +57,12 @@ class SensorService {
 
   StreamSubscription<Position>? _positionStreamSubscription;
 
-  bool startRecording(Ride ride) {
+  bool startRecording(RunningRide ride) {
     if (_positionStreamSubscription != null) {
       print("could not start recording, already running!");
       return false;
     }
-    final locationSettings = LocationSettings(accuracy: LocationAccuracy.high,
+    const locationSettings = LocationSettings(accuracy: LocationAccuracy.high,
         distanceFilter: Constants.LOCATION_DISTANCE_FILTER_M);
     final positionStream = Geolocator.getPositionStream(locationSettings: locationSettings);
     //message loop
