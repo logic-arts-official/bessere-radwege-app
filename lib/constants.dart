@@ -19,4 +19,3 @@ class Constants {
   static const int MIN_SYNC_INTERVAL_MS = 1000; //minimum interval (1 s) for network activities
   static const int MAX_SYNC_INTERVAL_MS = 600000; //maximum interval (10 min) after exponential backup
 }
-

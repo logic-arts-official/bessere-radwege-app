@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:bessereradwege/model/location.dart';
 import 'package:bessereradwege/constants.dart';
 import 'package:bessereradwege/model/running_ride.dart';
+import 'package:bessereradwege/model/user.dart';
 import 'package:bessereradwege/services/sync_service.dart';
+import 'package:bessereradwege/enums.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'dart:math';
@@ -16,28 +18,6 @@ import 'dart:convert'; // for the utf8.encode method
 
 
 const DB_VERSION = 1;
-
-enum RideType {
-  Unknown,
-  Commute,
-  Recreational,
-  Other,
-}
-
-enum MountType {
-  Unknown,
-  Jacket,
-  Pants,
-  Vehicle,
-  Other,
-}
-
-enum VehicleType {
-  Unknown,
-  Powered,
-  Unpowered,
-  Other,
-}
 
 class FinishedRide extends ChangeNotifier {
   //ride properties
@@ -102,9 +82,9 @@ class FinishedRide extends ChangeNotifier {
     _motionDurationS = rr.motionDurationS;
     _maxSpeedMS = rr.maxSpeedMS;
     _pseudonymSeed = Random.secure().nextDouble();
-    _rideType = RideType.Unknown;
-    _mountType = MountType.Unknown;
-    _vehicleType = VehicleType.Unknown;
+    _rideType = RideTypeByValue(User().defaultRideType);
+    _mountType = MountTypeByValue(User().defaultMountType);
+    _vehicleType = VehicleTypeByValue(User().defaultVehicleType);
     _flags = 0;
     _comment = "";
     _syncAllowed = true;
@@ -151,11 +131,11 @@ class FinishedRide extends ChangeNotifier {
     RSAPrivateKey privKey = RsaKeyHelper().parsePrivateKeyFromPem(privPem);
     _keyPair = crypto.AsymmetricKeyPair(pubKey, privKey);
     assert(map['rideType'] is int);
-    _rideType = RideType.values[(map['rideType'] as int)];
+    _rideType = RideTypeByValue((map['rideType'] as int));
     assert(map['vehicleType'] is int);
-    _vehicleType = VehicleType.values[(map['vehicleType'] as int)];
+    _vehicleType = VehicleTypeByValue(map['vehicleType'] as int);
     assert(map['mountType'] is int);
-    _mountType = MountType.values[(map['mountType'] as int)];
+    _mountType = MountTypeByValue(map['mountType'] as int);
     assert(map['flags'] is int);
     _flags = map['flags'] as int;
     assert(map['comment'] is String);
@@ -244,9 +224,9 @@ class FinishedRide extends ChangeNotifier {
       'maxSpeed': _maxSpeedMS,
       'publicKey': RsaKeyHelper().encodePublicKeyToPemPKCS1(_keyPair.publicKey as RSAPublicKey),
       'privateKey': RsaKeyHelper().encodePrivateKeyToPemPKCS1(_keyPair.privateKey as RSAPrivateKey),
-      'rideType': _rideType.index,
-      'vehicleType': _vehicleType.index,
-      'mountType': _mountType.index,
+      'rideType': _rideType.value,
+      'vehicleType': _vehicleType.value,
+      'mountType': _mountType.value,
       'flags': _flags,
       'comment': _comment,
       'pseudonymSeed':_pseudonymSeed,
@@ -294,9 +274,9 @@ class FinishedRide extends ChangeNotifier {
     map['motionDuration'] = _motionDurationS;
     map['maxSpeed'] = _maxSpeedMS;
     map['publicKey'] = RsaKeyHelper().encodePublicKeyToPemPKCS1(_keyPair.publicKey as RSAPublicKey);
-    map['rideType'] = _rideType.index;
-    map['vehicleType'] = _vehicleType.index;
-    map['mountType'] = _mountType.index;
+    map['rideType'] = _rideType.value;
+    map['vehicleType'] = _vehicleType.value;
+    map['mountType'] = _mountType.value;
     map['flags'] = _flags;
     map['comment'] = _comment;
     if (withLocations) {

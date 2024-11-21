@@ -17,6 +17,9 @@ class User extends ChangeNotifier {
   bool _firstStart = true;
   bool _uploadConsent = false;
   bool _initialized = false;
+  int _defaultVehicleType = 0;
+  int _defaultMountType = 0;
+  int _defaultRideType = 0;
 
   Future<void> initialize() async {
     if (!_initialized) {
@@ -28,6 +31,18 @@ class User extends ChangeNotifier {
       bool? consent = _sharedPrefs.getBool('upload_consent');
       if (consent != null) {
         uploadConsent = consent;
+      }
+      int? defaultVehicleType = _sharedPrefs.getInt('default_vehicle_type');
+      if (defaultVehicleType != null) {
+        _defaultVehicleType = defaultVehicleType;
+      }
+      int? defaultMountType = _sharedPrefs.getInt('default_mount_type');
+      if (defaultMountType != null) {
+        _defaultMountType = defaultMountType;
+      }
+      int? defaultRideType = _sharedPrefs.getInt('default_ride_type');
+      if (defaultRideType != null) {
+        _defaultRideType = defaultRideType;
       }
       _initialized = true;
     }
@@ -57,8 +72,47 @@ class User extends ChangeNotifier {
     }
   }
 
+  int get defaultVehicleType => _defaultVehicleType;
+
+  set defaultVehicleType(int val) {
+    if (val != _defaultVehicleType) {
+      _defaultVehicleType = val;
+      if (_initialized) {
+        _sharedPrefs.setInt('default_vehicle_type', val);
+      }
+      notifyListeners();
+    }
+  }
+
+  int get defaultMountType => _defaultMountType;
+
+  set defaultMountType(int val) {
+    if (val != _defaultMountType) {
+      _defaultMountType = val;
+      if (_initialized) {
+        _sharedPrefs.setInt('default_mount_type', val);
+      }
+      notifyListeners();
+    }
+  }
+
+  int get defaultRideType => _defaultRideType;
+
+  set defaultRideType(int val) {
+    if (val != _defaultRideType) {
+      _defaultRideType = val;
+      if (_initialized) {
+        _sharedPrefs.setInt('default_ride_type', val);
+      }
+      notifyListeners();
+    }
+  }
+
   void reset() {
     uploadConsent = false;
     firstStart = true;
+    defaultRideType = 0;
+    defaultMountType = 0;
+    defaultVehicleType = 0;
   }
 }
