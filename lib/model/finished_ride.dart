@@ -92,7 +92,7 @@ class FinishedRide extends ChangeNotifier {
     _syncRevision = 0;
 
     _locations.addAll(rr.locations);
-
+    print("building finished ride from running ride with ${_locations.length} locations");
     _genKeyPair().then((_) {  //gen key pair then persist
       _dbUpsertRide(updateData: true).then((_) {
         SyncService().addRide(this);
@@ -250,6 +250,7 @@ class FinishedRide extends ChangeNotifier {
     if (updateData) {
       final batch = _db.batch();
       batch.delete('location', where: 'rideId = ?', whereArgs: [_dbId]);
+      print("dbUpsert ${_locations.length} locations");
       for (final loc in _locations) {
         final map = loc.toMap();
         map['rideId'] = _dbId;
