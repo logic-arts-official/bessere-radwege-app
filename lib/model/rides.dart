@@ -2,7 +2,9 @@ import 'package:bessereradwege/model/running_ride.dart';
 import 'package:bessereradwege/model/finished_ride.dart';
 import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:toastification/toastification.dart';
 
 class Rides extends ChangeNotifier {
 
@@ -36,9 +38,15 @@ class Rides extends ChangeNotifier {
         print("permissions ok: $ok");
         if (ok) {
           _currentRide = RunningRide();
-          SensorService().startRecording(_currentRide!);
-          notifyListeners();
-          print("started ride");
+          SensorService().startRecording(_currentRide!).then((ok) {
+            if (ok) {
+              notifyListeners();
+              print("started ride");
+            } else {
+              _currentRide = null;
+              _showPrivilegesMessage();
+            }
+          });
         }
       });
     }
@@ -105,5 +113,17 @@ class Rides extends ChangeNotifier {
       _pastRides.add(FinishedRide.fromDbEntry(_database, rideMap));
     }
     notifyListeners();
+  }
+
+  void _showPrivilegesMessage() {
+    toastification.show(
+      type: ToastificationType.error,
+      style: ToastificationStyle.flat,
+      title: Text("Berechtigungen korrigieren"),
+      description: Text(
+          "Bitte Standortberechtigungen für diese App auf 'immer' stellen."),
+      alignment: Alignment.topLeft,
+      autoCloseDuration: const Duration(seconds: 5),
+    );
   }
 }

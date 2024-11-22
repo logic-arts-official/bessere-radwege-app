@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart' as ls;
 import 'package:bessereradwege/model/running_ride.dart';
-import 'package:bessereradwege/constants.dart';
 import 'package:bessereradwege/model/location.dart';
 
 class SensorService {
@@ -16,77 +15,80 @@ class SensorService {
     print("SensorService internal");
   }
 
-  final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
+  final ls.Location  _location = ls.Location();
+  StreamSubscription<ls.LocationData>? _locationStreamSubscription;
 
   Future<bool> checkPermissions() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await _geolocatorPlatform.isLocationServiceEnabled();
+    //make sure service is running
+    bool serviceEnabled = await _location.serviceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      print("geolocator services are not enabled");
-    }
-
-    permission = await _geolocatorPlatform.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await _geolocatorPlatform.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        print("geolocator permission denied");
+      serviceEnabled = await _location.requestService();
+      if (!serviceEnabled) {
+        print("location services are not enabled");
         return false;
       }
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      print("geolocator permission denied permanently");
-      return false;
+    //make sure we have user permission
+    ls.PermissionStatus permissionGranted = await _location.hasPermission();
+    if (permissionGranted == ls.PermissionStatus.denied) {
+      permissionGranted = await _location.requestPermission();
+      if (permissionGranted != ls.PermissionStatus.granted) {
+        print("location permissions denied");
+        return false;
+      }
     }
-
-    print("geolocator enabled and permission granted");
+    print("location service enabled and permission granted");
     return true;
   }
 
-  StreamSubscription<Position>? _positionStreamSubscription;
 
-  bool startRecording(RunningRide ride) {
-    if (_positionStreamSubscription != null) {
+  Future<bool> startRecording(RunningRide ride) async {
+    if (_locationStreamSubscription != null) {
       print("could not start recording, already running!");
       return false;
     }
-    const locationSettings = LocationSettings(accuracy: LocationAccuracy.high,
-        distanceFilter: Constants.LOCATION_DISTANCE_FILTER_M);
-    final positionStream = Geolocator.getPositionStream(locationSettings: locationSettings);
-    //message loop
-    _positionStreamSubscription = positionStream.listen((Position pos) {
+    await _location.changeSettings(accuracy: ls.LocationAccuracy.high, interval: 1000, distanceFilter: 0);
+
+    bool bgModeEnabled = await _location.isBackgroundModeEnabled();
+    if (!bgModeEnabled) {
+      try {
+        await _location.enableBackgroundMode();
+      } catch (e) {
+        print("ignoring ${e.toString()}");
+      }
+      try {
+        bgModeEnabled = await _location.enableBackgroundMode();
+      } catch (e) {
+        print("ignoring again ${e.toString()}");
+      }
+    }
+    if (!bgModeEnabled) {
+      print("Could not activate location background mode");
+      return false;
+    }
+    _locationStreamSubscription = _location.onLocationChanged.listen((ls.LocationData ld) {
       final loc = Location(
-        timestamp: pos.timestamp,
-        latitude: pos.latitude,
-        longitude: pos.longitude,
-        accuracy: pos.accuracy,
-        altitude: pos.altitude,
-        altitudeAccuracy: pos.altitudeAccuracy,
-        heading: pos.heading,
-        headingAccuracy: pos.headingAccuracy,
-        speed: pos.speed,
-        speedAccuracy: pos.speedAccuracy);
+          timestamp: (ld.time != null) ? DateTime.fromMillisecondsSinceEpoch(ld.time!.toInt()) : DateTime.now(),
+          latitude: ld.latitude ?? 0,
+          longitude: ld.longitude ?? 0,
+          accuracy: ld.accuracy ?? 0,
+          altitude: ld.altitude ?? 0,
+          altitudeAccuracy: ld.accuracy ?? 0,
+          heading: ld.heading ?? 0,
+          headingAccuracy: ld.headingAccuracy ?? 0,
+          speed: ld.speed ?? 0,
+          speedAccuracy: ld.speedAccuracy ?? 0);
       ride.addLocation(loc);
     });
     return true;
-  }
+   }
+
 
   void stopRecording() {
-    if (_positionStreamSubscription != null) {
-      _positionStreamSubscription!.cancel().then((_) {
-        _positionStreamSubscription = null;
+    if (_locationStreamSubscription != null) {
+      _location.enableBackgroundMode(enable: false);
+      _locationStreamSubscription!.cancel().then((_) {
+        _locationStreamSubscription = null;
       });
     }
   }

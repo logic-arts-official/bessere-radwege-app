@@ -1,6 +1,5 @@
 import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:bessereradwege/model/rides.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
@@ -94,11 +93,11 @@ class RecordScreenState extends State<RecordScreen> {
             VectorSourceProperties(url: _mapData.urlForMap(entry))
         );
       }
-      void doLater() async {
+/*      void doLater() async {
         final pos = await Geolocator.getCurrentPosition();
         print('MapData: current position: ${pos.toString()}');
       }
-      doLater();
+      doLater(); */
     } else {
       print("MapData: Style loaded but no mapController!");
     }

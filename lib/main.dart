@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:bessereradwege/model/user.dart';
 import 'package:bessereradwege/model/map_data.dart';
 import 'package:bessereradwege/model/rides.dart';
+import 'package:toastification/toastification.dart';
 
 void main() {
   runApp(
@@ -59,15 +60,17 @@ class MyAppState extends State<MyApp> {
       contents = const MainScreen(title: 'Bessere Radwege');
     }
 
-    return MaterialApp(
-      title: 'Bessere Radwege',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
+    return ToastificationWrapper(
+      child: MaterialApp(
+        title: 'Bessere Radwege',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.tealAccent,
+          ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
-      ),
-      home: contents,
+        home: contents,
+      )
     );
   }
 }
