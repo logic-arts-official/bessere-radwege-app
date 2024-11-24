@@ -9,6 +9,7 @@ import 'package:bessereradwege/model/rides.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initLogger();
   runApp(
       MultiProvider(providers: [

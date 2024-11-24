@@ -1,3 +1,4 @@
+import 'package:bessereradwege/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +21,7 @@ class User extends ChangeNotifier {
   int _defaultVehicleType = 0;
   int _defaultMountType = 0;
   int _defaultRideType = 0;
+  String _rideComment = "";
 
   Future<void> initialize() async {
     if (!_initialized) {
@@ -44,6 +46,11 @@ class User extends ChangeNotifier {
       if (defaultRideType != null) {
         _defaultRideType = defaultRideType;
       }
+      String? rideComment = _sharedPrefs.getString('ride_comment');
+      if (rideComment != null) {
+        _rideComment = rideComment;
+      }
+
       _initialized = true;
     }
   }
@@ -108,11 +115,24 @@ class User extends ChangeNotifier {
     }
   }
 
+  String get rideComment => _rideComment;
+
+  set rideComment(String val) {
+    if (val != _rideComment) {
+      _rideComment = val;
+      if (_initialized) {
+        _sharedPrefs.setString('ride_comment', val);
+        logInfo("setting rideComment to $val");
+      }
+    }
+  }
+
   void reset() {
     uploadConsent = false;
     firstStart = true;
     defaultRideType = 0;
     defaultMountType = 0;
     defaultVehicleType = 0;
+    rideComment = "";
   }
 }

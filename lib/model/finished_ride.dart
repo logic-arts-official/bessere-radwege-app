@@ -86,7 +86,7 @@ class FinishedRide extends ChangeNotifier {
     _mountType = mountTypeByValue(User().defaultMountType);
     _vehicleType = vehicleTypeByValue(User().defaultVehicleType);
     _flags = 0;
-    _comment = "";
+    _comment = User().rideComment;
     _syncAllowed = true;
     _editRevision = 1;
     _syncRevision = 0;
