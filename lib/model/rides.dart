@@ -1,7 +1,7 @@
+import 'package:bessereradwege/logger.dart';
 import 'package:bessereradwege/model/running_ride.dart';
 import 'package:bessereradwege/model/finished_ride.dart';
 import 'package:bessereradwege/services/sensor_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toastification/toastification.dart';
@@ -27,21 +27,21 @@ class Rides extends ChangeNotifier {
 
   Future<void> initialize() async {
 //    final dbPath = await getDatabasesPath();
-    _database = await openDatabase('rides.db', version:DB_VERSION, onCreate: _dbCreateTables);
+    _database = await openDatabase('rides.db', version:dbVersion, onCreate: _dbCreateTables);
     await _dbLoadRides();
   }
 
   void startRide() {
-    print("startride");
+    logInfo("startride");
     if (_currentRide == null) {
       SensorService().checkPermissions().then((ok) {
-        print("permissions ok: $ok");
+        logInfo("permissions ok: $ok");
         if (ok) {
           _currentRide = RunningRide();
           SensorService().startRecording(_currentRide!).then((ok) {
             if (ok) {
               notifyListeners();
-              print("started ride");
+              logInfo("started ride");
             } else {
               _currentRide = null;
               _showPrivilegesMessage();
@@ -53,14 +53,15 @@ class Rides extends ChangeNotifier {
   }
 
   Future<void> finishCurrentRide() async {
-    print("ride: finishCurrentRide");
+    logInfo("ride: finishCurrentRide");
     if (_currentRide != null) {
-      print("ride: have current ride");
+      logInfo("ride: have current ride");
       SensorService().stopRecording();
       RunningRide ride = _currentRide as RunningRide;
       ride.finish();
-      _pastRides.add(FinishedRide.fromRunningRide(ride, _database));
-      print("ride: added ride to past rides, now ${_pastRides.length}");
+      FinishedRide finishedRide = FinishedRide.fromRunningRide(ride, _database);
+      _pastRides.add(finishedRide);
+      logInfo("ride: added ride to past rides, now ${_pastRides.length}");
       _currentRide = null;
       notifyListeners();
     }
@@ -108,7 +109,7 @@ class Rides extends ChangeNotifier {
 
   Future<void> _dbLoadRides() async {
     final rides = await _database.query('ride', orderBy: 'startDate');
-    print("DATABASE: Loading rides $rides");
+    logInfo("DATABASE: Loading rides $rides");
     for (final rideMap in rides) {
       _pastRides.add(FinishedRide.fromDbEntry(_database, rideMap));
     }
@@ -119,8 +120,8 @@ class Rides extends ChangeNotifier {
     toastification.show(
       type: ToastificationType.error,
       style: ToastificationStyle.flat,
-      title: Text("Berechtigungen korrigieren"),
-      description: Text(
+      title: const Text("Berechtigungen korrigieren"),
+      description: const Text(
           "Bitte Standortberechtigungen für diese App auf 'immer' stellen."),
       alignment: Alignment.topLeft,
       autoCloseDuration: const Duration(seconds: 5),

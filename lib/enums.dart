@@ -59,7 +59,7 @@ enum MountType {
   final int value;
 }
 
-VehicleType VehicleTypeByValue(int value) {
+VehicleType vehicleTypeByValue(int value) {
   for (VehicleType t in VehicleType.values) {
     if (t.value == value) {
       return t;
@@ -68,7 +68,7 @@ VehicleType VehicleTypeByValue(int value) {
   return VehicleType.unknown;
 }
 
-RideType RideTypeByValue(int value) {
+RideType rideTypeByValue(int value) {
   for (RideType t in RideType.values) {
     if (t.value == value) {
       return t;
@@ -77,7 +77,7 @@ RideType RideTypeByValue(int value) {
   return RideType.unknown;
 }
 
-MountType MountTypeByValue(int value) {
+MountType mountTypeByValue(int value) {
   for (MountType t in MountType.values) {
     if (t.value == value) {
       return t;

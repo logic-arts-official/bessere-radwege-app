@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bessereradwege/constants.dart';
+import 'package:bessereradwege/logger.dart';
 import 'package:bessereradwege/server.dart';
 import 'package:bessereradwege/model/finished_ride.dart';
 import 'package:bessereradwege/keys.dart';
@@ -14,53 +15,77 @@ class SyncService {
 
   final _rides = Queue<FinishedRide>();
   Timer? _timer;
-  int _interval = Constants.MIN_SYNC_INTERVAL_MS;
+  int _interval = Constants.minSyncIntervalMS;
 
   factory SyncService() {
     return _service;
   }
 
-  SyncService._internal() {
-  }
+  SyncService._internal();
 
   void addRide(FinishedRide ride) {
-    _rides.add(ride);
-    print("SyncService addRide");
-    _restartTimerIfNeeded();
+    logInfo("SyncService addRide");
+    if (_dirty(ride)) {
+      logInfo("adding ride");
+      _rides.add(ride);
+      _restartTimerIfNeeded();
+    } else {
+      logInfo("no need to add ride");
+    }
   }
 
   void _restartTimerIfNeeded() {
     if ((_timer == null) && (_rides.isNotEmpty)) {
-      print("SyncService restarting timer interval: $_interval");
+      logInfo("SyncService restarting timer interval: $_interval");
       _timer = Timer(Duration(milliseconds: _interval), _sync);
     }
   }
 
-  /** a network action succeeded. Clear exponential backoff */
+  /// a network action succeeded. Clear exponential backoff
   void _syncActivitySucceeded() {
-    _interval = Constants.MIN_SYNC_INTERVAL_MS;
+    _interval = Constants.minSyncIntervalMS;
   }
 
-  /** a network action failed. Do exponential backoff */
+  /// a network action failed. Do exponential backoff
   void _syncActivityFailed() {
     _interval = ((_interval * 3) / 2) as int;
-    if (_interval > Constants.MAX_SYNC_INTERVAL_MS) {
-      _interval = Constants.MAX_SYNC_INTERVAL_MS;
+    if (_interval > Constants.maxSyncIntervalMS) {
+      _interval = Constants.maxSyncIntervalMS;
     }
+  }
+
+  bool _needCreate(FinishedRide ride) {
+    final shouldSync = ride.syncable && ride.syncAllowed;
+    final isSynced = (ride.syncRevision > 0);
+    return (shouldSync && !isSynced);
+  }
+
+  bool _needUpdate(FinishedRide ride) {
+    final shouldSync = ride.syncable && ride.syncAllowed;
+    final isSynced = (ride.syncRevision > 0);
+    final syncMismatch = (ride.syncRevision < ride.editRevision);
+    return (shouldSync && isSynced && syncMismatch);
+  }
+
+  bool _needDelete(FinishedRide ride) {
+    final shouldSync = ride.syncable && ride.syncAllowed;
+    final isSynced = (ride.syncRevision > 0);
+    return (!shouldSync && isSynced);
+  }
+  bool _dirty(FinishedRide ride) {
+    return _needCreate(ride) || _needUpdate(ride) || _needDelete(ride);
   }
 
   void _sync() async {
     _timer = null;
-    print("SyncService syncing");
+    logInfo("SyncService syncing");
     if (_rides.isNotEmpty) {
       FinishedRide ride = _rides.first;
-      bool shouldSync = ride.syncable && ride.syncAllowed;
       //note: needXYZ are mutually exclusive
-      bool needCreate = shouldSync && (ride.syncRevision == 0);
-      bool needUpdate = shouldSync && (ride.syncRevision > 0) && (ride.syncRevision < ride.editRevision);
-      bool needDelete = (!shouldSync) && (ride.syncRevision > 0);
+      bool needCreate = _needCreate(ride);
+      bool needUpdate = _needUpdate(ride);
+      bool needDelete = _needDelete(ride);
       int lastRevision = ride.editRevision;
-      print("sync ride ${ride.uuid} syncable ${ride.syncable} allowed ${ride.syncAllowed} revision $lastRevision synced ${ride.syncRevision} distM ${ride.totalDistanceM} durS ${ride.totalDurationS}");
       if (needCreate) {
         bool ok = await _createRide(ride);
         if (ok) {
@@ -92,7 +117,7 @@ class SyncService {
         }
         _restartTimerIfNeeded();
       } else {
-        print("need nothing");
+        logInfo("need nothing");
         //there was nothing to do with this entry
         _rides.removeFirst();
         _syncActivitySucceeded(); //well...
@@ -103,12 +128,12 @@ class SyncService {
   }
 
   Future<bool> _createRide(FinishedRide ride) async {
-    print("create");
+    logInfo("performing create");
     final ridedata = ride.toAnonymousJson(withLocations: true, withAnnotations: true);
     final ridedataJson = jsonEncode(ridedata);
     final signature = ride.sign(ridedataJson);
     final request = {
-      'apikey'    : Keys.API_KEY,
+      'apikey'    : Keys.apiKey,
       'uuid'      : ridedata['uuid'],
       'data'      : ridedataJson,
       'signature' : signature
@@ -117,12 +142,12 @@ class SyncService {
   }
 
   Future<bool> _updateRide(FinishedRide ride) async {
-    print("update");
+    logInfo("performing update");
     final ridedata = ride.toAnonymousJson(withLocations: false, withAnnotations: true);
     final ridedataJson = jsonEncode(ridedata);
     final signature = ride.sign(ridedataJson);
     final request = {
-      'apikey'    : Keys.API_KEY,
+      'apikey'    : Keys.apiKey,
       'uuid'      : ridedata['uuid'],
       'data'      : ridedataJson,
       'signature' : signature
@@ -131,13 +156,13 @@ class SyncService {
   }
 
   Future<bool> _deleteRide(FinishedRide ride) async {
-    print("delete");
+    logInfo("performing delete");
     final ridedata = ride.toAnonymousJson(withLocations: false, withAnnotations: true);
     ridedata['action'] = "DELETE";
     final ridedataJson = jsonEncode(ridedata);
     final signature = ride.sign(ridedataJson);
     final request = {
-      'apikey'    : Keys.API_KEY,
+      'apikey'    : Keys.apiKey,
       'uuid'      : ridedata['uuid'],
       'data'      : ridedataJson,
       'signature' : signature
@@ -148,19 +173,19 @@ class SyncService {
   Future<bool> _apiRequest(Map<String, dynamic> request) async {
     try {
       final url = Uri(
-        scheme: Server.PROTOCOL,
-        host: Server.NAME,
-        port: Server.PORT,
-        path: Server.API_PATH
+        scheme: Server.protocol,
+        host: Server.name,
+        port: Server.port,
+        path: Server.apiPath
       );
       final json = jsonEncode(request);
-      print("request is $json");
+      logInfo("request is $json");
       final response = await http.post(url, headers: {HttpHeaders.contentTypeHeader: "application/json"}, body: json);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      logInfo('Response status: ${response.statusCode}');
+      logInfo('Response body: ${response.body}');
       return (response.statusCode == 200);
     } catch (e) {
-      print("_apiRequest exception $e");
+      logInfo("_apiRequest exception $e");
       return false;
     }
   }

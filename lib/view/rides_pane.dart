@@ -112,10 +112,10 @@ class RidesPane extends StatelessWidget {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) => RideDigestView(rides[index]),
             separatorBuilder: (BuildContext context, int index) => const Divider(),
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top:90.0),
+        const Padding(
+          padding: EdgeInsets.only(top:90.0),
         )
       ],
     )

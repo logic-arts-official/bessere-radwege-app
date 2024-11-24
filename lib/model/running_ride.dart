@@ -97,7 +97,7 @@ class RunningRide extends ChangeNotifier {
               1000000;
           final m = loc.distance(lastLoc);
           final mpers = (s > 0) ? m / s : 0;
-          if (mpers >= Constants.MIN_MOTION_M_PER_S) {
+          if (mpers >= Constants.minMotionMperS) {
             motionDist += m;
             motionTime += s;
           }

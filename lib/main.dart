@@ -1,3 +1,4 @@
+import 'package:bessereradwege/logger.dart';
 import 'package:bessereradwege/view/first_boot_screen.dart';
 import 'package:bessereradwege/view/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,8 @@ import 'package:bessereradwege/model/map_data.dart';
 import 'package:bessereradwege/model/rides.dart';
 import 'package:toastification/toastification.dart';
 
-void main() {
+Future<void> main() async {
+  await initLogger();
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => User()),

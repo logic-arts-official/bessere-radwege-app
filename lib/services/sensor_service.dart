@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bessereradwege/logger.dart';
 import 'package:location/location.dart' as ls;
 import 'package:bessereradwege/model/running_ride.dart';
 import 'package:bessereradwege/model/location.dart';
@@ -12,7 +13,7 @@ class SensorService {
   }
 
   SensorService._internal() {
-    print("SensorService internal");
+    logInfo("SensorService internal");
   }
 
   final ls.Location  _location = ls.Location();
@@ -24,7 +25,7 @@ class SensorService {
     if (!serviceEnabled) {
       serviceEnabled = await _location.requestService();
       if (!serviceEnabled) {
-        print("location services are not enabled");
+        logInfo("location services are not enabled");
         return false;
       }
     }
@@ -33,18 +34,18 @@ class SensorService {
     if (permissionGranted == ls.PermissionStatus.denied) {
       permissionGranted = await _location.requestPermission();
       if (permissionGranted != ls.PermissionStatus.granted) {
-        print("location permissions denied");
+        logErr("location permissions denied");
         return false;
       }
     }
-    print("location service enabled and permission granted");
+    logInfo("location service enabled and permission granted");
     return true;
   }
 
 
   Future<bool> startRecording(RunningRide ride) async {
     if (_locationStreamSubscription != null) {
-      print("could not start recording, already running!");
+      logErr("could not start recording, already running!");
       return false;
     }
     await _location.changeSettings(accuracy: ls.LocationAccuracy.high, interval: 1000, distanceFilter: 0);
@@ -54,16 +55,16 @@ class SensorService {
       try {
         await _location.enableBackgroundMode();
       } catch (e) {
-        print("ignoring ${e.toString()}");
+        logInfo("ignoring ${e.toString()}");
       }
       try {
         bgModeEnabled = await _location.enableBackgroundMode();
       } catch (e) {
-        print("ignoring again ${e.toString()}");
+        logInfo("ignoring again ${e.toString()}");
       }
     }
     if (!bgModeEnabled) {
-      print("Could not activate location background mode");
+      logErr("Could not activate location background mode");
       return false;
     }
     _locationStreamSubscription = _location.onLocationChanged.listen((ls.LocationData ld) {

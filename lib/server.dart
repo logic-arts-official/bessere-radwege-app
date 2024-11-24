@@ -1,7 +1,7 @@
 class Server {
-  static const PROTOCOL = "https";
-  static const String NAME = "bessere-radwege.de";
-  static const int PORT = 443;
-  static const String API_PATH = "/api/v1/rides";
+  static const protocol = "https";
+  static const String name = "bessere-radwege.de";
+  static const int port = 443;
+  static const String apiPath = "/api/v1/rides";
 }
 

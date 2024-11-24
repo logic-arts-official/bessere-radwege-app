@@ -1,3 +1,4 @@
+import 'package:bessereradwege/logger.dart';
 import 'package:bessereradwege/services/sensor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -79,27 +80,27 @@ class RecordScreenState extends State<RecordScreen> {
 
   void _onMapCreated(MapLibreMapController controller) {
     _mapController = controller;
-    print("MapData: map created!");
+    logInfo("MapData: map created!");
   }
 
   void onStyleLoadedCallback() {
-    print("MapData: style loaded!");
+    logInfo("MapData: style loaded!");
     if (_mapController != null) {
       List<String> maps = _mapData.loadedMaps;
-      print('MapData: loaded maps length ${maps.length}');
+      logInfo('MapData: loaded maps length ${maps.length}');
       for (final entry in maps) {
-        print('MapData: adding source $entry -> ${_mapData.urlForMap(entry)}');
+        logInfo('MapData: adding source $entry -> ${_mapData.urlForMap(entry)}');
         _mapController!.addSource(entry,
             VectorSourceProperties(url: _mapData.urlForMap(entry))
         );
       }
 /*      void doLater() async {
         final pos = await Geolocator.getCurrentPosition();
-        print('MapData: current position: ${pos.toString()}');
+        logInfo('MapData: current position: ${pos.toString()}');
       }
       doLater(); */
     } else {
-      print("MapData: Style loaded but no mapController!");
+      logErr("MapData: Style loaded but no mapController!");
     }
 
   }

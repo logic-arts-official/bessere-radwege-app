@@ -13,10 +13,11 @@ class SettingsPane extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Padding(
-            child: const Text("Standard-Fahrradtyp:"),
-            padding: const EdgeInsets.only(
-                top: 30, left: 10, right: 10, bottom: 10)),
+            padding: EdgeInsets.only(
+                top: 30, left: 10, right: 10, bottom: 10),
+            child: Text("Standard-Fahrradtyp:")),
         Padding(
+            padding: const EdgeInsets.all(10),
             child: DropdownButton<int>(
                 value: Provider.of<User>(context).defaultVehicleType,
                 onChanged: (int? val) {
@@ -28,14 +29,14 @@ class SettingsPane extends StatelessWidget {
                 items: VehicleType.values.map((VehicleType t) {
                   return DropdownMenuItem<int>(
                       value: t.value, child: Text(t.label));
-                }).toList()),
-            padding: const EdgeInsets.all(10)),
+                }).toList())),
         const Padding(
-            child: const Text("Standardposition Handy:"),
-            padding: const EdgeInsets.only(
-                top: 30, left: 10, right: 10, bottom: 10)),
+            padding: EdgeInsets.only(
+                top: 30, left: 10, right: 10, bottom: 10),
+            child: Text("Standardposition Handy:")),
         Padding(
-            child: DropdownButton<int>(
+          padding: const EdgeInsets.all(10),
+          child: DropdownButton<int>(
                 value: Provider.of<User>(context).defaultMountType,
                 onChanged: (int? val) {
                   if (val != null) {
@@ -47,13 +48,14 @@ class SettingsPane extends StatelessWidget {
                   return DropdownMenuItem<int>(
                       value: t.value, child: Text(t.label));
                 }).toList()),
-            padding: const EdgeInsets.all(10)),
+           ),
         const Padding(
-            child: const Text("Standard-Fahrtentyp:"),
-            padding: const EdgeInsets.only(
-                top: 30, left: 10, right: 10, bottom: 10)),
+          padding: EdgeInsets.only(
+            top: 30, left: 10, right: 10, bottom: 10),
+          child: Text("Standard-Fahrtentyp:")),
         Padding(
-            child: DropdownButton<int>(
+          padding: const EdgeInsets.all(10),
+          child: DropdownButton<int>(
                 value: Provider.of<User>(context).defaultRideType,
                 onChanged: (int? val) {
                   if (val != null) {
@@ -65,7 +67,7 @@ class SettingsPane extends StatelessWidget {
                   return DropdownMenuItem<int>(
                       value: t.value, child: Text(t.label));
                 }).toList()),
-            padding: EdgeInsets.all(10)),
+            ),
         /*        ElevatedButton(
             onPressed: () {
               Provider.of<User>(context, listen: false).reset();

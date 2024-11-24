@@ -14,10 +14,10 @@ import 'package:sqflite/sqflite.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:pointycastle/api.dart' as crypto;
 import 'package:uuid/uuid.dart';
-import 'dart:convert'; // for the utf8.encode method
+import 'dart:convert';
+import '../logger.dart';
 
-
-const DB_VERSION = 1;
+const dbVersion = 1;
 
 class FinishedRide extends ChangeNotifier {
   //ride properties
@@ -59,7 +59,7 @@ class FinishedRide extends ChangeNotifier {
   double get totalDurationS => (_endDate.difference(_startDate).inMilliseconds / 1000);
   double get averageSpeedKmh => (totalDurationS > 0)  ? (totalDistanceM / totalDurationS) * 3.6 : 0.0;
   Duration get recordingDuration => _endDate.difference(_startDate);
-  bool get syncable => ((_distM > Constants.MIN_SYNC_DISTANCE_M) && (totalDurationS > Constants.MIN_SYNC_DURATION_S));
+  bool get syncable => ((_distM > Constants.minSyncDistanceM) && (totalDurationS > Constants.minSyncDurationS));
   bool get syncAllowed => _syncAllowed;
   int get editRevision => _editRevision;
   int get syncRevision => _syncRevision;
@@ -72,7 +72,7 @@ class FinishedRide extends ChangeNotifier {
     if (rr.endDate is DateTime) {
       _endDate = rr.endDate!;
     } else {
-      print("FinishedRide fromRunningRide: Not finished. Assuming now.");
+      logWarn("FinishedRide fromRunningRide: Not finished. Assuming now.");
       _endDate = DateTime.now();
     }
     _name = _findDefaultName(); //start and end date must be set
@@ -82,9 +82,9 @@ class FinishedRide extends ChangeNotifier {
     _motionDurationS = rr.motionDurationS;
     _maxSpeedMS = rr.maxSpeedMS;
     _pseudonymSeed = Random.secure().nextDouble();
-    _rideType = RideTypeByValue(User().defaultRideType);
-    _mountType = MountTypeByValue(User().defaultMountType);
-    _vehicleType = VehicleTypeByValue(User().defaultVehicleType);
+    _rideType = rideTypeByValue(User().defaultRideType);
+    _mountType = mountTypeByValue(User().defaultMountType);
+    _vehicleType = vehicleTypeByValue(User().defaultVehicleType);
     _flags = 0;
     _comment = "";
     _syncAllowed = true;
@@ -92,17 +92,24 @@ class FinishedRide extends ChangeNotifier {
     _syncRevision = 0;
 
     _locations.addAll(rr.locations);
-    print("building finished ride from running ride with ${_locations.length} locations");
-    _genKeyPair().then((_) {  //gen key pair then persist
-      _dbUpsertRide(updateData: true).then((_) {
-        SyncService().addRide(this);
+    logInfo("building finished ride from running ride with ${_locations.length} locations");
+    try {
+      _genKeyPair().then((_) { //gen key pair then persist
+        logInfo("Key pair generated");
+        _dbUpsertRide(updateData: true).then((_) {
+          logInfo("Ride upserted");
+          SyncService().addRide(this);
+        });
       });
-    });
+    }
+    catch (e) {
+      logErr("Ride persist and sync failed: $e");
+    }
   }
 
   FinishedRide.fromDbEntry(Database db, Map<String, Object?> map) {
     _db = db;
-    print("DATABASE: Reading ride $map");
+    logInfo("DATABASE: Reading ride $map");
     assert(map['uuid'] is String);
     _uuid = map['uuid'] as String;
     assert(map['name'] is String);
@@ -131,11 +138,11 @@ class FinishedRide extends ChangeNotifier {
     RSAPrivateKey privKey = RsaKeyHelper().parsePrivateKeyFromPem(privPem);
     _keyPair = crypto.AsymmetricKeyPair(pubKey, privKey);
     assert(map['rideType'] is int);
-    _rideType = RideTypeByValue((map['rideType'] as int));
+    _rideType = rideTypeByValue((map['rideType'] as int));
     assert(map['vehicleType'] is int);
-    _vehicleType = VehicleTypeByValue(map['vehicleType'] as int);
+    _vehicleType = vehicleTypeByValue(map['vehicleType'] as int);
     assert(map['mountType'] is int);
-    _mountType = MountTypeByValue(map['mountType'] as int);
+    _mountType = mountTypeByValue(map['mountType'] as int);
     assert(map['flags'] is int);
     _flags = map['flags'] as int;
     assert(map['comment'] is String);
@@ -154,7 +161,7 @@ class FinishedRide extends ChangeNotifier {
      and then add add to sync
      */
     _requestLocations(db).then((val) {
-      print("Loaded locations - going to sync");
+      logInfo("Loaded locations - going to sync");
       SyncService().addRide(this);
     });
   }
@@ -194,24 +201,25 @@ class FinishedRide extends ChangeNotifier {
 
   String _findDefaultName() {
     if (recordingDuration.inHours > 2) {
-      return Constants.LONG_RIDE;
+      return Constants.longRide;
     }
     final midHour = (_endDate.hour + _startDate.hour) / 2;
     if ((midHour >= 7) && (midHour <= 9)) {
-      return Constants.MORNING_RIDE;
+      return Constants.morningRide;
     } else if ((midHour >= 9) && (midHour <= 12)) {
-      return Constants.LATE_MORNING_RIDE;
+      return Constants.lateMorningRide;
     } else if ((midHour >= 12) && (midHour <= 14)) {
-      return Constants.NOON_RIDE;
+      return Constants.noonRide;
     } else if ((midHour >= 14) && (midHour < 18)) {
-      return Constants.AFTERNOON_RIDE;
+      return Constants.afternoonRide;
     } else if ((midHour >= 18) && (midHour < 22)) {
-      return Constants.EVENING_RIDE;
+      return Constants.eveningRide;
     }
-    return Constants.NIGHT_RIDE;
+    return Constants.nightRide;
   }
 
   Future<void> _dbUpsertRide({bool updateData = true}) async {
+    logInfo("upserting ride building map");
     final map = {
       'uuid': _uuid,
       'name': _name,
@@ -238,30 +246,31 @@ class FinishedRide extends ChangeNotifier {
     if (haveId) {
       map['id'] = _dbId;
     }
+    logInfo("upserting ride with map $map}");
     int id = await _db.insert(
       'ride',
       map,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print("upsert prev id $_dbId new id $id");
+    logInfo("upsert prev id $_dbId new id $id");
     if (!haveId) {
       _dbId = id;
     }
     if (updateData) {
       final batch = _db.batch();
       batch.delete('location', where: 'rideId = ?', whereArgs: [_dbId]);
-      print("dbUpsert ${_locations.length} locations");
+      logInfo("dbUpsert ${_locations.length} locations");
       for (final loc in _locations) {
         final map = loc.toMap();
         map['rideId'] = _dbId;
         batch.insert('location', map);
       }
       await batch.commit();
-      print("DATABASE: Upserted ride");
+      logInfo("DATABASE: Upserted ride");
     }
   }
 
-  double _randomizeTimeDelta() => _pseudonymSeed * -Constants.SYNC_RANDOMIZE_S;
+  double _randomizeTimeDelta() => _pseudonymSeed * -Constants.syncRandomizeS;
 
   Map<String, dynamic> toAnonymousJson({bool withLocations = true, bool withAnnotations = true}) {
     final timeDelta = _randomizeTimeDelta();
@@ -285,7 +294,7 @@ class FinishedRide extends ChangeNotifier {
       if (_locations.isNotEmpty) {
         Location firstLocation = _locations.first;
         Location lastLocation = _locations.last;
-        double anonymizeRadius = Constants.SYNC_CUTOFF_M;
+        double anonymizeRadius = Constants.syncCutoffM;
         int firstIdx = 0;
         int lastIdx = _locations.length-1;
         while (firstIdx < _locations.length) {  //clip start and end
