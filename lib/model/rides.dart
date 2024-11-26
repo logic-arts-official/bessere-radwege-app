@@ -67,6 +67,15 @@ class Rides extends ChangeNotifier {
     }
   }
 
+  Future<void> deleteRide(FinishedRide ride) async {
+    logInfo("DATABASE: deleting ride ${ride.uuid}");
+    //TODO: Make sure we're out of syncing service
+    _pastRides.remove(ride);
+    await _database.delete('location', where: 'rideId = ?', whereArgs: [ride.dbId]);
+    await _database.delete('ride', where: 'uuid = ?', whereArgs: [ride.uuid]);
+    notifyListeners();
+  }
+
   Future<void> _dbCreateTables(db, version) async {
     await db.execute('CREATE TABLE ride('
         'id INTEGER PRIMARY KEY AUTOINCREMENT,'

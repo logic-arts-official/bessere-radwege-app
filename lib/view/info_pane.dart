@@ -31,7 +31,11 @@ Die erhobenen Datensätze werden anonymisiert auf Open Data Cologne veröffentli
             ),
             onPressed: () { launchUrl(Uri.parse('https://www.bessere-radwege.de')); },
             child: const Text("www.bessere-radwege.de"),
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(child: Text('App version 0.1, build 2024-11-26-18-10-00', style: Theme.of(context).textTheme.bodyMedium)),
+          ),
         ],
       ),
     ); // This trailing comma makes auto-formatting nicer for build methods.

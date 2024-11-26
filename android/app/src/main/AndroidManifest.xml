@@ -8,14 +8,14 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <application
-        android:label="bessereradwege"
+        android:label="Bessere Radwege"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        <service
+<!--        <service
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location"
-            android:name=".FlutterLocationService"/>
+            android:name=".FlutterLocationService"/> -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

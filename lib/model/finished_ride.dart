@@ -51,6 +51,7 @@ class FinishedRide extends ChangeNotifier {
 
 
   String get uuid => _uuid;
+  int get dbId => _dbId;
   String get name => _name;
   DateTime get startDate => _startDate;
   DateTime? get endDate => _endDate;
@@ -63,7 +64,24 @@ class FinishedRide extends ChangeNotifier {
   bool get syncAllowed => _syncAllowed;
   int get editRevision => _editRevision;
   int get syncRevision => _syncRevision;
-  set syncRevision(int rev) { _syncRevision = rev; _dbUpsertRide(updateData: false); }
+
+  set syncRevision(int rev) {
+    if (_syncRevision != rev) {
+      _syncRevision = rev;
+      _dbUpsertRide(updateData: false).then((_) {
+        SyncService().addRide(this);
+      });
+    }
+  }
+
+  set syncAllowed(bool allowed) {
+    if (allowed != _syncAllowed) {
+      _syncAllowed = allowed;
+      _dbUpsertRide(updateData: false).then((_) {
+        SyncService().addRide(this);
+      });
+    }
+  }
 
   FinishedRide.fromRunningRide(RunningRide rr, Database db) {
     _db = db;
