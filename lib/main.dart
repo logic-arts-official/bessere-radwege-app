@@ -1,11 +1,12 @@
-import 'package:bessereradwege/logger.dart';
-import 'package:bessereradwege/view/first_boot_screen.dart';
-import 'package:bessereradwege/view/main_screen.dart';
+import 'logger.dart';
+import 'model/user.dart';
+import 'model/map_data.dart';
+import 'model/rides.dart';
+import 'view/first_boot_screen.dart';
+import 'view/main_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bessereradwege/model/user.dart';
-import 'package:bessereradwege/model/map_data.dart';
-import 'package:bessereradwege/model/rides.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {

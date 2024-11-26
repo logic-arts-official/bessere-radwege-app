@@ -1,6 +1,7 @@
+import '../model/user.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bessereradwege/model/user.dart';
 
 class FirstBootScreen extends StatelessWidget {
   const FirstBootScreen({super.key, required this.title});

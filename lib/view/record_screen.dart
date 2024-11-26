@@ -1,10 +1,11 @@
-import 'package:bessereradwege/logger.dart';
-import 'package:bessereradwege/services/sensor_service.dart';
+import '../logger.dart';
+import '../services/sensor_service.dart';
+import '../model/rides.dart';
+import '../model/map_data.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bessereradwege/model/rides.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:bessereradwege/model/map_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RecordScreen extends StatefulWidget {

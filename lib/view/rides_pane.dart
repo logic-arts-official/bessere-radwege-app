@@ -1,11 +1,10 @@
+import '../logger.dart';
+import '../model/rides.dart';
+import '../model/finished_ride.dart';
 
-import 'package:bessereradwege/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:bessereradwege/model/rides.dart';
-import 'package:bessereradwege/model/finished_ride.dart';
-
 
 class RidesPane extends StatelessWidget {
   const RidesPane({super.key});
@@ -147,8 +146,8 @@ class RideDigestView extends StatelessWidget {
                           child: Text(_ride.name, style: Theme.of(context).textTheme.titleLarge),
                         ),
                         PopupMenuButton(
-                          child:Icon(Icons.more_vert_sharp),
-                          itemBuilder: _buildRideMenu
+                          itemBuilder: _buildRideMenu,
+                          child: const Icon(Icons.more_vert_sharp),
                         ),
                   ]),
                     Table(
@@ -193,21 +192,21 @@ class RideDigestView extends StatelessWidget {
         onTap: () {
           _ride.syncAllowed = false;
         },
-        child: Text("Fahrt nicht teilen"),
+        child: const Text("Fahrt nicht teilen"),
       ));
     } else {
       list.add(PopupMenuItem(
         onTap: () {
           _ride.syncAllowed = true;
         },
-        child: Text("Fahrt teilen"),
+        child: const Text("Fahrt teilen"),
       ));
     }
     list.add(PopupMenuItem(
       onTap: () {
         Rides().deleteRide(_ride);
       },
-      child: Text("Fahrt löschen"),
+      child: const Text("Fahrt löschen"),
     ));
     return list;
   }

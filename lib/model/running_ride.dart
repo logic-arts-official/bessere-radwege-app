@@ -1,6 +1,6 @@
 
-import 'package:bessereradwege/model/location.dart';
-import 'package:bessereradwege/constants.dart';
+import 'location.dart';
+import '../constants.dart';
 import 'package:flutter/foundation.dart';
 
 class RunningRide extends ChangeNotifier {

@@ -1,7 +1,7 @@
-import 'package:bessereradwege/logger.dart';
-import 'package:bessereradwege/model/running_ride.dart';
-import 'package:bessereradwege/model/finished_ride.dart';
-import 'package:bessereradwege/services/sensor_service.dart';
+import 'running_ride.dart';
+import 'finished_ride.dart';
+import '../logger.dart';
+import '../services/sensor_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toastification/toastification.dart';

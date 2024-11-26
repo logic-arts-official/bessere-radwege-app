@@ -1,12 +1,12 @@
-import 'dart:io';
+import '../logger.dart';
 
+import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../logger.dart';
 
 
 class MapData extends ChangeNotifier {

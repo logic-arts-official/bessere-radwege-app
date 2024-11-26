@@ -1,12 +1,12 @@
 
-import 'dart:async';
 
-import 'package:bessereradwege/model/location.dart';
-import 'package:bessereradwege/constants.dart';
-import 'package:bessereradwege/model/running_ride.dart';
-import 'package:bessereradwege/model/user.dart';
-import 'package:bessereradwege/services/sync_service.dart';
-import 'package:bessereradwege/enums.dart';
+import 'location.dart';
+import 'running_ride.dart';
+import 'user.dart';
+import '../services/sync_service.dart';
+import '../constants.dart';
+import '../enums.dart';
+import '../logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'dart:math';
@@ -15,7 +15,7 @@ import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:pointycastle/api.dart' as crypto;
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
-import '../logger.dart';
+import 'dart:async';
 
 const dbVersion = 1;
 

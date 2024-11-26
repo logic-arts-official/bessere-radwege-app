@@ -1,8 +1,8 @@
+import '../logger.dart';
+import '../model/running_ride.dart';
+import '../model/location.dart';
 import 'dart:async';
-import 'package:bessereradwege/logger.dart';
 import 'package:location/location.dart' as ls;
-import 'package:bessereradwege/model/running_ride.dart';
-import 'package:bessereradwege/model/location.dart';
 
 class SensorService {
 

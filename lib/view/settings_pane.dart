@@ -1,6 +1,7 @@
+import '../model/user.dart';
+import '../enums.dart';
+
 import 'package:flutter/material.dart';
-import 'package:bessereradwege/model/user.dart';
-import 'package:bessereradwege/enums.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPane extends StatelessWidget {
@@ -75,7 +76,7 @@ class SettingsPane extends StatelessWidget {
               child: Text("Fahrtkommentar:"),
           ),
           Padding(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                   top: 30, left: 10, right: 10, bottom: 10),
               child: Text("(für Entwicklungszwecke, bitte leer lassen)",
                 style: Theme.of(context).textTheme.bodySmall),
@@ -83,7 +84,7 @@ class SettingsPane extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(10),
             child: TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
               initialValue: Provider.of<User>(context).rideComment,

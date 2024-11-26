@@ -1,12 +1,13 @@
+import '../constants.dart';
+import '../logger.dart';
+import '../server.dart';
+import '../model/finished_ride.dart';
+import '../keys.dart';
+
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
-import 'package:bessereradwege/constants.dart';
-import 'package:bessereradwege/logger.dart';
-import 'package:bessereradwege/server.dart';
-import 'package:bessereradwege/model/finished_ride.dart';
-import 'package:bessereradwege/keys.dart';
 import 'package:http/http.dart' as http;
 
 class SyncService {

@@ -1,9 +1,10 @@
-import 'package:bessereradwege/view/settings_pane.dart';
-import 'package:bessereradwege/view/no_rides_pane.dart';
-import 'package:bessereradwege/view/rides_pane.dart';
-import 'package:bessereradwege/view/info_pane.dart';
-import 'package:bessereradwege/view/record_screen.dart';
-import 'package:bessereradwege/model/rides.dart';
+import 'settings_pane.dart';
+import 'no_rides_pane.dart';
+import 'rides_pane.dart';
+import 'info_pane.dart';
+import 'record_screen.dart';
+import '../model/rides.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
