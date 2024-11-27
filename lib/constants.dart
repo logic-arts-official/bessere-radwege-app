@@ -7,6 +7,8 @@ class Constants {
   static const String eveningRide = "Radfahrt abends";
   static const String nightRide = "Radfahrt nachts";
   static const String longRide = "Lange Radfahrt";
+  static const String startRecording = "Losfahren";
+  static const String endRecording = "Fahrt beenden";
 
   static const double minMotionMperS = 1.4;
   static const int locationDistanceFilterM = 2;

@@ -3,6 +3,7 @@ import 'no_rides_pane.dart';
 import 'rides_pane.dart';
 import 'info_pane.dart';
 import 'record_screen.dart';
+import '../constants.dart';
 import '../model/rides.dart';
 
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {Provider.of<Rides>(context, listen: false).startRide();},
-          label: const Text("Losfahren"),
+          label: const Text(Constants.startRecording),
           icon: const Icon(Icons.play_arrow),
       )
     );

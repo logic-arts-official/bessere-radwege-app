@@ -1,4 +1,5 @@
 import '../logger.dart';
+import '../constants.dart';
 import '../services/sensor_service.dart';
 import '../model/rides.dart';
 import '../model/map_data.dart';
@@ -70,7 +71,7 @@ class RecordScreenState extends State<RecordScreen> {
             ),
             ElevatedButton(
               onPressed: () {Provider.of<Rides>(context, listen: false).finishCurrentRide(); },
-              child: const Text('Fahrt beenden'),
+              child: const Text(Constants.endRecording),
             )
           ],
         ),
