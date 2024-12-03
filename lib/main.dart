@@ -7,7 +7,6 @@ import 'view/main_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,17 +63,15 @@ class MyAppState extends State<MyApp> {
       contents = const MainScreen(title: 'Bessere Radwege');
     }
 
-    return ToastificationWrapper(
-      child: MaterialApp(
-        title: 'Bessere Radwege',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.tealAccent,
-          ),
-          useMaterial3: true,
+    return MaterialApp(
+      title: 'Bessere Radwege',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.tealAccent,
         ),
-        home: contents,
-      )
+        useMaterial3: true,
+      ),
+      home: contents,
     );
   }
 }

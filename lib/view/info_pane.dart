@@ -34,7 +34,7 @@ Die erhobenen Datensätze werden anonymisiert auf Open Data Cologne veröffentli
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text('App version 0.1.1, build 2024-11-26-23-07-30', style: Theme.of(context).textTheme.bodyMedium)),
+            child: Center(child: Text('App version 0.1.2, build 2024-12-03-02-15-00', style: Theme.of(context).textTheme.bodyMedium)),
           ),
         ],
       ),
