@@ -9,7 +9,7 @@ Continuous Integration workflow that runs on every push and pull request to main
 
 **Steps:**
 - Checkout code
-- Setup Flutter (v3.19.0)
+- Setup Flutter (v3.35.7)
 - Install dependencies
 - Verify code formatting
 - Run static analysis
