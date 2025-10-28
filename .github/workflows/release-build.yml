@@ -39,7 +39,9 @@ jobs:
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+            chmod 600 android/app/keystore.jks
             echo "$KEY_PROPERTIES" > android/key.properties
+            chmod 600 android/key.properties
           fi
 
       - name: Build Android Release APK
@@ -47,6 +49,12 @@ jobs:
 
       - name: Build Android App Bundle
         run: flutter build appbundle --release
+
+      - name: Cleanup signing files
+        if: always()
+        run: |
+          rm -f android/app/keystore.jks
+          rm -f android/key.properties
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
