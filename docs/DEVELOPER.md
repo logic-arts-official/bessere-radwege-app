@@ -2,7 +2,9 @@
 
 ## Overview
 
-The "Bessere Radwege" (Better Bike Paths) app is a Flutter-based mobile application for Android and iOS that collects cycling data to help improve bicycle infrastructure in Cologne, Germany. The app records GPS location and sensor data during bike rides, anonymizes it, and uploads it to a server for analysis.
+This cycling data collection app is a Flutter-based mobile application for Android and iOS that collects cycling data to help improve bicycle infrastructure. The app records GPS location and sensor data during bike rides, anonymizes it, and uploads it to a server for analysis.
+
+This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause. This fork is independently operated with its own backend infrastructure.
 
 ## Technology Stack
 
@@ -30,7 +32,7 @@ bessere-radwege-app/
 ├── assets/               # Images, fonts, and map data
 │   ├── images/          # App images and logos
 │   ├── icon/            # App icon
-│   ├── cologne.zip      # Offline map data for Cologne
+│   ├── cologne.zip      # Offline map data (example)
 │   ├── map-font.zip     # Map font resources
 │   └── map-style.json   # Map styling configuration
 ├── lib/
@@ -279,8 +281,10 @@ Key configurable values:
 ### Server Configuration (`lib/server.dart`)
 
 - Protocol: HTTPS
-- Server: `bessere-radwege.de:443`
+- Server configuration is in this file
 - API endpoint: `/api/v1/rides`
+
+**Note**: This fork uses independently operated backend infrastructure.
 
 ## Privacy and Security
 
@@ -375,10 +379,10 @@ Edit `lib/services/sync_service.dart`:
 - **Dart Language Tour**: https://dart.dev/guides/language/language-tour
 - **Provider Package**: https://pub.dev/packages/provider
 - **MapLibre GL**: https://maplibre.org/
-- **Project Website**: https://www.bessere-radwege.de
+- **Project Repository**: https://github.com/logic-arts-official/bessere-radwege-app
 
 ## License
 
-Copyright 2024 Matthias Krauss. All rights reserved.
+This project is licensed under the BSD 3-Clause License - see LICENSE.txt for full license details.
 
-See LICENSE.txt for full license (BSD 3-Clause).
+Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.

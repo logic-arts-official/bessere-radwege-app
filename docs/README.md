@@ -1,6 +1,8 @@
 # Documentation Index
 
-Welcome to the Bessere Radwege app documentation!
+Welcome to the cycling data collection app documentation!
+
+This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
 
 ## 📚 Available Documentation
 
@@ -110,8 +112,7 @@ Found an error or want to improve the docs?
 ## Feedback
 
 Questions or suggestions about the documentation?
-- Open an issue on GitHub
-- Visit: https://www.bessere-radwege.de
+- Open an issue on GitHub: https://github.com/logic-arts-official/bessere-radwege-app
 - Check the main [README.md](../README.md)
 
 ---

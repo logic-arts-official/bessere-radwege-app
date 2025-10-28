@@ -2,7 +2,7 @@
 
 ## System Overview
 
-The Bessere Radwege app is a mobile application built with Flutter that collects and analyzes cycling data to improve bicycle infrastructure. The system consists of three main components:
+This cycling data collection app is a mobile application built with Flutter that collects and analyzes cycling data to improve bicycle infrastructure. The system consists of three main components:
 
 1. **Mobile App** (Flutter/Dart) - Records rides and manages data
 2. **Local Database** (SQLite) - Stores ride data persistently
@@ -34,7 +34,7 @@ The Bessere Radwege app is a mobile application built with Flutter that collects
           ▼
     ┌──────────────────────────────┐
     │  Backend Server (HTTPS)      │
-    │  bessere-radwege.de          │
+    │  (Independently operated)    │
     └──────────────────────────────┘
 ```
 
@@ -653,7 +653,7 @@ test/
 
 ## Conclusion
 
-The Bessere Radwege app architecture prioritizes:
+This app architecture prioritizes:
 - **Simplicity**: Clear layer separation
 - **Privacy**: Multiple anonymization layers
 - **Reliability**: Robust sync and error handling
@@ -662,3 +662,7 @@ The Bessere Radwege app architecture prioritizes:
 - **Extensibility**: Easy to add features
 
 The Flutter framework provides cross-platform capabilities while the Provider pattern ensures clean, reactive state management throughout the application.
+
+## Attribution
+
+This architecture is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause. This fork is independently operated and maintained.

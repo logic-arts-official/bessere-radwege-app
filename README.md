@@ -1,20 +1,28 @@
-# Bessere Radwege App
+# Cycling Infrastructure Data Collection App
 
-A Flutter-based mobile application for collecting and analyzing cycling data to improve bicycle infrastructure in Cologne, Germany.
+A Flutter-based mobile application for collecting and analyzing cycling data to improve bicycle infrastructure.
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE.txt)
 [![Flutter](https://img.shields.io/badge/Flutter-3.3.4+-02569B?logo=flutter)](https://flutter.dev)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS-lightgrey)](https://github.com/logic-arts-official/bessere-radwege-app)
 
+## About This Fork
+
+This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+
+Original project: [Bessere Radwege by Matthias Krauss](https://github.com/mkrauss/bessere-radwege)
+
+This fork is independently operated with its own backend infrastructure and has been modified to be city-agnostic.
+
 ## Overview
 
-The "Bessere Radwege" (Better Bike Paths) app automatically records GPS and sensor data during bike rides. The collected data is anonymized and analyzed to identify problem areas like rough surfaces, detours, and dangerous spots, helping to improve cycling infrastructure for everyone in Cologne.
+This app automatically records GPS and sensor data during bike rides. The collected data is anonymized and analyzed to identify problem areas like rough surfaces, detours, and dangerous spots, helping to improve cycling infrastructure in your community.
 
 **Key Features:**
 - 📍 Automatic GPS tracking during rides
 - 🔒 Strong privacy protection with data anonymization
 - 📊 Ride statistics and history
-- 🗺️ Offline map support for Cologne
+- 🗺️ Offline map support
 - ☁️ Secure data upload to analysis server
 - 🎯 Contribution to open data for urban planning
 
@@ -29,8 +37,7 @@ The "Bessere Radwege" (Better Bike Paths) app automatically records GPS and sens
 
 ### 🌐 External Links
 
-- **Project Website**: [www.bessere-radwege.de](https://www.bessere-radwege.de)
-- **Part of**: un:box Cologne initiative by the City of Cologne
+- **GitHub Repository**: [logic-arts-official/bessere-radwege-app](https://github.com/logic-arts-official/bessere-radwege-app)
 
 ## For End Users
 
@@ -98,12 +105,17 @@ See the [Architecture Overview](docs/ARCHITECTURE.md) for technical details.
 
 ## License
 
-Copyright 2024 Matthias Krauss. All rights reserved.
-
 This project is licensed under the BSD 3-Clause License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+## Attribution
+
+Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+
+This fork is independently operated and maintained. The backend infrastructure is hosted and operated independently from the original project.
 
 ## Acknowledgments
 
-This app is part of the "un:box Cologne" project, funded by the City of Cologne.
-
-Special thanks to all contributors and the cycling community of Cologne! 🚴‍♀️🚴‍♂️
+Special thanks to:
+- Matthias Krauss for creating the original Bessere Radwege project
+- All contributors to this fork
+- The cycling community! 🚴‍♀️🚴‍♂️

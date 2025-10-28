@@ -1,6 +1,6 @@
 # GitHub Workflows
 
-This directory contains GitHub Actions workflows for the Bessere Radwege app.
+This directory contains GitHub Actions workflows for the cycling data collection app.
 
 ## Workflows
 
