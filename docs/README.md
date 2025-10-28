@@ -2,7 +2,7 @@
 
 Welcome to the cycling data collection app documentation!
 
-This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause.
 
 ## 📚 Available Documentation
 

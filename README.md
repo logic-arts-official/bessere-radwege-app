@@ -8,7 +8,7 @@ A Flutter-based mobile application for collecting and analyzing cycling data to 
 
 ## About This Fork
 
-This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause.
 
 Original project: [Bessere Radwege by Matthias Krauss](https://github.com/mkrauss/bessere-radwege)
 
@@ -109,7 +109,7 @@ This project is licensed under the BSD 3-Clause License - see the [LICENSE.txt](
 
 ## Attribution
 
-Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause.
 
 This fork is independently operated and maintained. The backend infrastructure is hosted and operated independently from the original project.
 

@@ -299,7 +299,7 @@ The project is open source! Developers can contribute via GitHub:
 
 ## Credits
 
-Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause.
 
 This fork is independently operated and maintained.
 

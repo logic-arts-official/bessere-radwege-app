@@ -1,6 +1,8 @@
 class Server {
   static const protocol = "https";
-  static const String name = "api.example.com"; // Replace with your backend server
+  // TODO: Configure your backend server hostname before deployment
+  // See docs/DEVELOPER.md for backend infrastructure setup instructions
+  static const String name = "api.example.com";
   static const int port = 443;
   static const String apiPath = "/api/v1/rides";
 }

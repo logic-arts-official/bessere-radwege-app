@@ -4,7 +4,7 @@
 
 This cycling data collection app is a Flutter-based mobile application for Android and iOS that collects cycling data to help improve bicycle infrastructure. The app records GPS location and sensor data during bike rides, anonymizes it, and uploads it to a server for analysis.
 
-This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause. This fork is independently operated with its own backend infrastructure.
+This project is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause. This fork is independently operated with its own backend infrastructure.
 
 ## Technology Stack
 
@@ -385,4 +385,4 @@ Edit `lib/services/sync_service.dart`:
 
 This project is licensed under the BSD 3-Clause License - see LICENSE.txt for full license details.
 
-Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause.
+Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause.

@@ -665,4 +665,4 @@ The Flutter framework provides cross-platform capabilities while the Provider pa
 
 ## Attribution
 
-This architecture is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3 Clause. This fork is independently operated and maintained.
+This architecture is based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause. This fork is independently operated and maintained.
