@@ -172,6 +172,12 @@ class SyncService {
   }
 
   Future<bool> _apiRequest(Map<String, dynamic> request) async {
+    // Validate server configuration before making API requests
+    if (!Server.isConfigured()) {
+      logErr("Cannot make API request: ${Server.getConfigurationError()}");
+      return false;
+    }
+    
     try {
       final url = Uri(
         scheme: Server.protocol,

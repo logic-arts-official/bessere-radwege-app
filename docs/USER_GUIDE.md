@@ -1,8 +1,8 @@
-# User Guide - Bessere Radwege App
+# User Guide - Cycling Data Collection App
 
 ## Welcome!
 
-Thank you for helping improve bicycle infrastructure in Cologne! The Bessere Radwege (Better Bike Paths) app automatically collects data during your bike rides to help identify problem areas and improve cycling conditions for everyone.
+Thank you for helping improve bicycle infrastructure in your community! This app automatically collects data during your bike rides to help identify problem areas and improve cycling conditions for everyone.
 
 ## What does this app do?
 
@@ -52,7 +52,7 @@ The app will be available on the Google Play Store in the future. Check the proj
 
 ### For iOS Users
 
-iOS installation instructions will be provided when the iOS version becomes available. Check https://www.bessere-radwege.de for updates.
+iOS installation instructions will be provided when the iOS version becomes available.
 
 ## First-Time Setup
 
@@ -263,7 +263,7 @@ Yes! The app uses advanced cryptography to anonymize your data. Each ride gets a
 No, the app requires upload consent to function. The project depends on collecting this data to improve cycling infrastructure.
 
 ### Does the app work offline?
-The app can record rides offline, but needs internet to upload data later. Maps are included offline for the Cologne area.
+The app can record rides offline, but needs internet to upload data later. Maps may be included offline for supported areas.
 
 ### How much data does it use?
 Very little - typically a few kilobytes per ride for uploading GPS coordinates.
@@ -277,17 +277,17 @@ iOS support is planned but not yet available. Check the project website for upda
 ### Who can see my rides?
 Only aggregated, anonymous statistics are published. Individual rides cannot be traced back to you.
 
-### Can I use it outside Cologne?
-The app will record rides anywhere, but the project focuses on analyzing Cologne's cycling infrastructure.
+### Can I use it outside my city?
+The app will record rides anywhere, but data analysis is focused on supported geographic areas.
 
 ## Getting Help
 
 ### Need more information?
-- Visit: **https://www.bessere-radwege.de**
-- The website has more details about the project
+- Visit the project repository on GitHub
+- Check the documentation in the repository
 
 ### Found a bug or have suggestions?
-- Contact the project team through the website
+- Open an issue on the GitHub repository
 - Provide details about:
   - What you were doing
   - What went wrong
@@ -299,11 +299,8 @@ The project is open source! Developers can contribute via GitHub:
 
 ## Credits
 
-This app is part of the "un:box Cologne" initiative by the City of Cologne.
+Based on the Bessere Radwege project by Matthias Krauss (© 2024), licensed under BSD-3-Clause.
 
-**Project**: Bessere Radwege  
-**Website**: https://www.bessere-radwege.de  
-**Copyright**: 2024 Matthias Krauss  
-**License**: BSD 3-Clause (see project repository)
+This fork is independently operated and maintained.
 
-Thank you for helping make Cologne's bike paths better for everyone! 🚴‍♀️🚴‍♂️
+Thank you for helping make cycling infrastructure better for everyone! 🚴‍♀️🚴‍♂️

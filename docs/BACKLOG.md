@@ -1,6 +1,6 @@
 # Project Backlog
 
-This document tracks bugs, improvements, issues, and tasks for the Bessere Radwege app.
+This document tracks bugs, improvements, issues, and tasks for this cycling data collection app.
 
 **Last Updated**: 2025-10-28  
 **App Version**: 0.1.2
@@ -133,8 +133,8 @@ None identified currently.
 ### Features
 
 **IMP-009: Offline map for multiple cities**
-- **Description**: Currently only Cologne map is included
-- **Proposal**: Allow downloading maps for other cities
+- **Description**: Support for multiple offline map areas
+- **Proposal**: Allow downloading maps for different cities
 - **Priority**: Medium
 - **Effort**: High
 

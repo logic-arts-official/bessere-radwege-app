@@ -2,6 +2,7 @@ import 'logger.dart';
 import 'model/user.dart';
 import 'model/map_data.dart';
 import 'model/rides.dart';
+import 'server.dart';
 import 'view/first_boot_screen.dart';
 import 'view/main_screen.dart';
 
@@ -11,6 +12,13 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLogger();
+  
+  // Validate server configuration
+  if (!Server.isConfigured()) {
+    logWarn("Server configuration warning: ${Server.getConfigurationError()}");
+    logWarn("The app will not be able to upload ride data until server is configured.");
+  }
+  
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => User()),
