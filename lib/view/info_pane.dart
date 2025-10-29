@@ -20,7 +20,7 @@ Durch automatische Analyse der Fahrtdaten werden Umwege, schlechte Untergründe 
           
 Die Stadtplanung bekommt dadurch Einblicke in die reale Wegenutzung und Probleme von Radfahrenden und kann so bessere Wege für alle schaffen.
 
-Dieses Projekt basiert auf dem Bessere Radwege Projekt von Matthias Krauss (© 2024), lizenziert unter BSD-3-Clause.
+Dieses Projekt basiert auf dem Bessere Radwege Projekt von Matthias Krauss (© 2024), lizensiert unter BSD-3-Clause.
 
 Dieser Fork wird unabhängig betrieben und gewartet.
           '''),
